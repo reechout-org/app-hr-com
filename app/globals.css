@@ -1,3 +1,5 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 @import "tailwindcss";
 
 /* Light theme — from app_hr_com theme-default.less (:root custom properties only) */
@@ -164,6 +166,20 @@
   --color-success-rgb: var(--success-color-rgb);
   --duration-fast: 150ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --card: var(--surface-1);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-1);
+  --popover-foreground: var(--text-primary);
+  --primary-foreground: var(--white);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--text-primary);
+  --input: var(--border-color);
+  --ring: var(--primary-color);
+
 }
 
 /* Dark theme — from app_hr_com theme-dark.less (same property names, html.dark) */
@@ -322,6 +338,20 @@
   --color-success-rgb: var(--success-color-rgb);
   --duration-fast: 150ms;
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --card: var(--surface-1);
+  --card-foreground: var(--text-primary);
+  --popover: var(--surface-1);
+  --popover-foreground: var(--text-primary);
+  --primary-foreground: var(--white);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--text-muted);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--text-primary);
+  --input: var(--border-color);
+  --ring: var(--primary-color);
+
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -342,6 +372,19 @@
   --radius-lg: var(--radius-lg);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
 }
 
 body {
@@ -659,5 +702,17 @@ body {
   .reech-pair-spatial-loader::before,
   .reech-pair-spatial-loader::after {
     animation-duration: 2.4s;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }

@@ -21,6 +21,25 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { FloatingBtn } from "@/components/floating-btn";
 import { questionnairesApi, type Questionnaire } from "@/lib/api/questionnaires";
 import { cn } from "@/lib/ui/cn";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/toggle-group";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 // Modal Components
 import { DeleteQuestionnaireModal } from "./components/delete-questionnaire-modal";
@@ -40,67 +59,23 @@ function FilterDropdown({
   value: string;
   onChange: (v: string) => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    if (open) document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [open]);
-
-  const selectedOption = options.find((o) => o.value === value);
-
   return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex h-10 min-w-[140px] items-center justify-between gap-2 rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] px-3 text-sm text-[var(--text-primary)] shadow-sm outline-none transition-colors hover:border-[var(--border-color)] focus-visible:border-[var(--primary-color)] focus-visible:ring-1 focus-visible:ring-[var(--primary-color)]"
-      >
-        <span className={!selectedOption ? "text-[var(--text-muted)]" : "font-medium text-[var(--text-primary)]"}>
-          {selectedOption ? selectedOption.label : label}
-        </span>
-        <ChevronDown className="h-4 w-4 text-[var(--icon-accent-color)] opacity-70" />
-      </button>
-
-      {open && (
-        <div className="absolute left-0 z-50 mt-2 w-[180px] origin-top-left rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] py-1 shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.14)] ring-1 ring-black ring-opacity-5 focus:outline-none">
-          <button
-            onClick={() => {
-              onChange("");
-              setOpen(false);
-            }}
-            className={cn(
-              "flex w-full items-center px-4 py-2 text-sm transition-colors hover:bg-[var(--surface-1)]",
-              !value ? "bg-[var(--primary-light)]/50 font-medium text-[var(--primary-color)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-            )}
-          >
-            Any {label.toLowerCase()}
-          </button>
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => {
-                onChange(opt.value);
-                setOpen(false);
-              }}
-              className={cn(
-                "flex w-full items-center px-4 py-2 text-sm transition-colors hover:bg-[var(--surface-1)]",
-                opt.value === value ? "bg-[var(--primary-light)]/50 font-medium text-[var(--primary-color)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <Select value={value || "all"} onValueChange={(val) => onChange(val === "all" ? "" : val)}>
+      <SelectTrigger className="h-10 min-w-[140px] rounded-xl bg-background shadow-sm border-border focus:ring-primary">
+        <SelectValue placeholder={label} />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">Any {label.toLowerCase()}</SelectItem>
+        {options.map((opt) => (
+          <SelectItem key={opt.value} value={opt.value}>
+            {opt.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
+
 
 import { Suspense } from "react";
 
@@ -116,13 +91,14 @@ function QuestionnairesDashboard() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
+  
   // Modal States
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<Questionnaire | null>(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const targetClasses = 'border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09),0_1px_4px_rgba(var(--shadow-rgb),0.05)]';
 
   useEffect(() => {
     if (searchParams.get("create") === "true") {
@@ -176,18 +152,14 @@ function QuestionnairesDashboard() {
     setIsCreateModalOpen(true);
   };
 
-  const handleEditClick = (item: Questionnaire, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEditClick = (item: Questionnaire) => {
     setSelectedQuestionnaire(item);
     setIsUpdateModalOpen(true);
-    setActiveDropdown(null);
   };
 
-  const handleDeleteClick = (item: Questionnaire, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDeleteClick = (item: Questionnaire) => {
     setSelectedQuestionnaire(item);
     setIsDeleteModalOpen(true);
-    setActiveDropdown(null);
   };
 
   const filteredQuestionnaires = useMemo(() => {
@@ -230,7 +202,7 @@ function QuestionnairesDashboard() {
       <div className="fixed inset-0 -z-10 bg-[var(--background-color)] bg-[radial-gradient(ellipse_at_top_right,rgba(var(--primary-color-rgb),0.05),transparent_60%)]" />
 
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative z-20">
-        <div className="flex w-full min-h-[52px] flex-col gap-4 rounded-[20px] border border-[var(--border-color-light)] bg-white/50 py-3 px-[clamp(0.875rem,2.5vw,1.125rem)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.04)] backdrop-blur-xl sm:px-[clamp(1.125rem,3.5vw,1.5rem)] lg:px-[clamp(1.25rem,4vw,2rem)] md:flex-row md:items-center md:justify-between dark:bg-black/30">
+        <div className={cn("flex w-full min-h-[52px] flex-col gap-4 rounded-[20px] py-3 px-[clamp(0.875rem,2.5vw,1.125rem)] sm:px-[clamp(1.125rem,3.5vw,1.5rem)] lg:px-[clamp(1.25rem,4vw,2rem)] md:flex-row md:items-center md:justify-between", targetClasses)}>
           
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-3">
@@ -261,41 +233,38 @@ function QuestionnairesDashboard() {
           <div className="flex items-center gap-4">
             {/* Search Input */}
             <div className="relative w-full max-w-[280px]">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--icon-accent-color)]" />
-              <input
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
                 type="text"
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 w-full rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] pl-9 pr-4 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--primary-color)] focus:ring-1 focus:ring-[var(--primary-color)] placeholder:text-[var(--text-muted)]"
+                className="h-10 w-full rounded-xl pl-9 bg-background border-border focus-visible:ring-primary placeholder:text-muted-foreground shadow-sm"
               />
             </div>
 
             {/* View Toggle */}
-            <div className="flex h-10 items-center rounded-xl border border-[var(--border-color-light)] bg-[var(--surface-1)] p-1 shadow-sm">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={cn(
-                  "flex h-full w-10 items-center justify-center rounded-xl transition-all",
-                  viewMode === "grid"
-                    ? "bg-gradient-to-br from-[var(--primary-color)] to-[var(--primary-hover)] text-white shadow-sm"
-                    : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]"
-                )}
+            <ToggleGroup 
+              type="single" 
+              value={viewMode} 
+              onValueChange={(val) => val && setViewMode(val as ViewMode)} 
+              className="h-10 items-center rounded-xl border border-border bg-card p-1 shadow-sm gap-0"
+            >
+              <ToggleGroupItem 
+                value="grid" 
+                aria-label="Grid view" 
+                className={cn("h-full w-10 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground data-[state=on]:bg-primary data-[state=on]:text-primary-foreground")}
               >
                 <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={cn(
-                  "flex h-full w-10 items-center justify-center rounded-xl transition-all",
-                  viewMode === "list"
-                    ? "bg-gradient-to-br from-[var(--primary-color)] to-[var(--primary-hover)] text-white shadow-sm"
-                    : "text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)]"
-                )}
+              </ToggleGroupItem>
+              <ToggleGroupItem 
+                value="list" 
+                aria-label="List view" 
+                className={cn("h-full w-10 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground data-[state=on]:bg-primary data-[state=on]:text-primary-foreground")}
               >
                 <ListIcon className="h-4 w-4" />
-              </button>
-            </div>
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
         </div>
       </div>
@@ -315,9 +284,9 @@ function QuestionnairesDashboard() {
           <>
             {/* List View */}
             {viewMode === "list" && (
-              <div className="rounded-[20px] border border-[var(--border-color-light)] bg-white/40 shadow-[0_4px_24px_rgba(var(--shadow-rgb),0.02)] backdrop-blur-xl dark:bg-black/20 relative z-10">
+              <div className={cn("rounded-[20px] relative z-10", targetClasses)}>
                 {/* Desktop Header */}
-                <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_1.2fr_80px] border-b border-[var(--border-color-light)] bg-white/60 px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] backdrop-blur-md md:grid dark:bg-black/40 rounded-t-[20px]">
+                <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_1.2fr_80px] border-b border-[var(--border-color-light)] bg-black/5 px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] md:grid dark:bg-white/5 rounded-t-[20px]">
                   <div className="px-2">Questionnaire</div>
                   <div className="px-2">Created By</div>
                   <div className="px-2">Status</div>
@@ -332,7 +301,7 @@ function QuestionnairesDashboard() {
                     <div
                       key={item?.id || i}
                       className={cn(
-                        "group grid grid-cols-1 p-4 transition-colors hover:bg-white/60 md:grid-cols-[2fr_1fr_1fr_1fr_1.2fr_80px] md:px-6 md:py-4 dark:hover:bg-white/10 last:rounded-b-[20px]",
+                        "group grid grid-cols-1 p-4 transition-colors hover:bg-black/5 md:grid-cols-[2fr_1fr_1fr_1fr_1.2fr_80px] md:px-6 md:py-4 dark:hover:bg-white/5 last:rounded-b-[20px]",
                         isLoading && "animate-pulse"
                       )}
                     >
@@ -420,36 +389,23 @@ function QuestionnairesDashboard() {
                           <div className="h-8 w-8 rounded-xl bg-[var(--border-color-light)]" />
                         ) : (
                           <>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveDropdown(activeDropdown === item!.id ? null : item!.id);
-                              }}
-                              className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-secondary)] transition-colors hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)]"
-                            >
-                              <MoreVertical className="h-5 w-5" />
-                            </button>
-                            {activeDropdown === item!.id && (
-                              <>
-                                <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setActiveDropdown(null); }} />
-                                <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] py-1 shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.14)]">
-                                  <button
-                                    onClick={(e) => handleEditClick(item!, e)}
-                                    className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--text-primary)] hover:bg-[var(--surface-1)]"
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                    Edit
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleDeleteClick(item!, e)}
-                                    className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--error-color)] hover:bg-[var(--surface-1)]"
-                                  >
-                                    <Trash className="h-4 w-4" />
-                                    Delete
-                                  </button>
-                                </div>
-                              </>
-                            )}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                                  <MoreVertical className="h-5 w-5" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32 rounded-xl">
+                                <DropdownMenuItem onClick={() => handleEditClick(item!)}>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDeleteClick(item!)} className="text-destructive focus:text-destructive focus:bg-destructive/10 dark:focus:bg-destructive/20">
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </>
                         )}
                       </div>
@@ -474,36 +430,23 @@ function QuestionnairesDashboard() {
                                 {format(new Date(item!.created_at), "MMM d")}
                               </div>
                             </div>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveDropdown(activeDropdown === item!.id ? null : item!.id);
-                              }}
-                              className="flex h-8 w-8 items-center justify-center rounded-xl text-[var(--text-secondary)] transition-colors hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] outline-none"
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </button>
-                            {activeDropdown === item!.id && (
-                              <>
-                                <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setActiveDropdown(null); }} />
-                                <div className="absolute right-0 bottom-full z-50 mb-1 w-32 rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] py-1 shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.14)]">
-                                  <button
-                                    onClick={(e) => handleEditClick(item!, e)}
-                                    className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--text-primary)] hover:bg-[var(--surface-1)]"
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                    Edit
-                                  </button>
-                                  <button
-                                    onClick={(e) => handleDeleteClick(item!, e)}
-                                    className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--error-color)] hover:bg-[var(--surface-1)]"
-                                  >
-                                    <Trash className="h-4 w-4" />
-                                    Delete
-                                  </button>
-                                </div>
-                              </>
-                            )}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button className="flex h-8 w-8 items-center justify-center rounded-xl text-muted-foreground transition-colors hover:bg-primary/10 hover:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                                  <MoreVertical className="h-4 w-4" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-32 rounded-xl">
+                                <DropdownMenuItem onClick={() => handleEditClick(item!)}>
+                                  <Edit className="mr-2 h-4 w-4" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDeleteClick(item!)} className="text-destructive focus:text-destructive focus:bg-destructive/10 dark:focus:bg-destructive/20">
+                                  <Trash className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </>
                         )}
                       </div>
@@ -520,7 +463,7 @@ function QuestionnairesDashboard() {
                   <div
                     key={item?.id || i}
                     className={cn(
-                      "group relative flex flex-col overflow-hidden rounded-[20px] border border-[var(--border-color-light)] bg-white/40 p-5 shadow-sm backdrop-blur-xl transition-all hover:-translate-y-0.5 hover:border-[var(--primary-color-rgb)]/30 hover:shadow-md dark:bg-black/20",
+                      cn("group relative flex flex-col overflow-hidden rounded-[20px] p-5 transition-all hover:-translate-y-0.5 hover:border-[var(--primary-color-rgb)]/30", targetClasses),
                       isLoading && "animate-pulse"
                     )}
                   >
@@ -542,36 +485,23 @@ function QuestionnairesDashboard() {
                           <h3 className="line-clamp-1 text-base font-bold text-[var(--text-primary)] transition-colors group-hover:text-[var(--text-accent-color)]">
                             {item!.title}
                           </h3>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setActiveDropdown(activeDropdown === item!.id ? null : item!.id);
-                            }}
-                            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-[var(--text-secondary)] hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)]"
-                          >
-                            <MoreVertical className="h-4 w-4" />
-                          </button>
-                          {activeDropdown === item!.id && (
-                            <>
-                              <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setActiveDropdown(null); }} />
-                              <div className="absolute right-0 top-full z-50 mt-1 w-32 rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] py-1 shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.14)]">
-                                <button
-                                  onClick={(e) => handleEditClick(item!, e)}
-                                  className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--text-primary)] hover:bg-[var(--surface-1)]"
-                                >
-                                  <Edit className="h-4 w-4" />
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={(e) => handleDeleteClick(item!, e)}
-                                  className="flex w-full items-center gap-2 px-3 py-1.5 text-sm text-[var(--error-color)] hover:bg-[var(--surface-1)]"
-                                >
-                                  <Trash className="h-4 w-4" />
-                                  Delete
-                                </button>
-                              </div>
-                            </>
-                          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <button className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                                <MoreVertical className="h-4 w-4" />
+                              </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-32 rounded-xl">
+                              <DropdownMenuItem onClick={() => handleEditClick(item!)}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDeleteClick(item!)} className="text-destructive focus:text-destructive focus:bg-destructive/10 dark:focus:bg-destructive/20">
+                                <Trash className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                         
                         {item!.details && (
