@@ -69,7 +69,7 @@ export function AddCandidates({ candidates, onChange }: AddCandidatesProps) {
   };
 
   return (
-    <div className="flex flex-col gap-6 p-8 rounded-[24px] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm">
+    <div className="flex flex-col gap-6 p-8 rounded-[var(--radius-md)] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-color-light)] dark:border-white/5 pb-4">
         <div className="flex items-center gap-4">
@@ -161,7 +161,7 @@ export function AddCandidates({ candidates, onChange }: AddCandidatesProps) {
 
       {/* Modal */}
       <Dialog open={isModalOpen} onOpenChange={(open) => !open && setIsModalOpen(false)}>
-        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[24px] dark:border-white/[0.09]">
+        <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09]">
           <div className="flex flex-col">
             <div className="flex items-center justify-between border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-6 py-4 dark:border-white/[0.09]">
               <DialogHeader className="p-0 text-left">
@@ -171,7 +171,7 @@ export function AddCandidates({ candidates, onChange }: AddCandidatesProps) {
               </DialogHeader>
             </div>
 
-            <form onSubmit={handleSave} className="flex flex-col gap-5 p-6 overflow-y-auto" data-lenis-prevent>
+            <form onSubmit={handleSave} className="flex flex-col gap-5 p-6 overflow-y-auto">
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="first_name" className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -252,7 +252,7 @@ export function AddCandidates({ candidates, onChange }: AddCandidatesProps) {
       </Dialog>
       {/* Bulk Add Modal */}
       <Dialog open={isBulkModalOpen} onOpenChange={(open) => !open && setIsBulkModalOpen(false)}>
-        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[24px] dark:border-white/[0.09]">
+        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09]">
           <div className="flex flex-col">
             <div className="flex items-center justify-between border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-6 py-4 dark:border-white/[0.09]">
               <DialogHeader className="p-0 text-left">
@@ -262,7 +262,7 @@ export function AddCandidates({ candidates, onChange }: AddCandidatesProps) {
               </DialogHeader>
             </div>
 
-            <div className="flex flex-col gap-6 p-6 overflow-y-auto" data-lenis-prevent>
+            <div className="flex flex-col gap-6 p-6 overflow-y-auto">
               <div className="flex flex-col gap-4">
                 <div>
                   <h4 className="text-[15px] font-bold text-foreground mb-1">Upload Candidate File</h4>

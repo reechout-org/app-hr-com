@@ -44,7 +44,7 @@ import { cn } from "@/lib/ui/cn";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="mt-1.5 text-[13px] text-[var(--error-color)]">{message}</p>;
+  return <p className="mt-1.5 text-[14px] text-[var(--error-color)]">{message}</p>;
 }
 
 export default function RegisterPage() {

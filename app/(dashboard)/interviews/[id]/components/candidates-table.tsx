@@ -83,13 +83,13 @@ const getScoreColor = (score: number | null | undefined) => {
 
 const Separator = () => (
   <>
-    <div className="hidden sm:block w-px h-[50px] bg-gradient-to-b from-transparent via-[var(--glass-border-medium)] to-transparent opacity-60 shrink-0" />
-    <div className="h-px w-full bg-[var(--glass-border-medium)] opacity-60 sm:hidden shrink-0" />
+    <div className="hidden sm:block w-px h-[50px] bg-gradient-to-b from-transparent via-[var(--header-floating-border)] to-transparent shrink-0" />
+    <div className="h-px w-full bg-[var(--header-floating-border)] sm:hidden shrink-0" />
   </>
 );
 
 const Section = ({ children, className }: { children: React.ReactNode; className?: string }) => (
-  <div className={cn("flex-1 p-[16px] sm:p-[18px_16px] flex items-center justify-start min-w-0", className)}>
+  <div className={cn("flex-1 p-[16px] sm:p-[18px_16px] flex items-center justify-start min-w-0 bg-transparent", className)}>
     {children}
   </div>
 );
@@ -97,16 +97,16 @@ const Section = ({ children, className }: { children: React.ReactNode; className
 const ActionTrigger = ({ icon: Icon, title, subtitle, onClick, disabled }: { icon: React.ElementType, title: string, subtitle: string, onClick?: () => void, disabled?: boolean }) => (
   <div 
     className={cn(
-      "flex items-center gap-[8px] p-[10px_14px] border border-[var(--border-color)] bg-[var(--surface-1)] rounded-[8px] w-full sm:w-auto min-w-[120px] transition-all duration-200 group/btn",
-      disabled ? "opacity-50 cursor-default" : "cursor-pointer hover:bg-[var(--gray-bg)] hover:border-[rgba(var(--primary-color-rgb),0.3)] hover:shadow-[0_2px_8px_rgba(var(--primary-color-rgb),0.08)] active:scale-[0.98]"
+      "flex items-center gap-[8px] p-[10px_14px] border border-[var(--header-floating-border)] bg-background rounded-xl w-full sm:w-auto min-w-[120px] transition-all duration-200 group/btn",
+      disabled ? "opacity-50 cursor-default" : "cursor-pointer hover:bg-[var(--surface-2)] hover:border-[rgba(var(--primary-color-rgb),0.3)] hover:shadow-sm active:scale-[0.98]"
     )}
     onClick={!disabled ? onClick : undefined}
   >
-    <div className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-[6px] bg-[var(--gray-bg)] transition-all duration-200 group-hover/btn:bg-[rgba(var(--primary-color-rgb),0.1)]">
-      <Icon className={cn("h-4 w-4 text-[var(--text-secondary)] transition-colors duration-200", !disabled && "group-hover/btn:text-[var(--icon-accent-color)]")} />
+    <div className="flex h-[32px] w-[32px] shrink-0 items-center justify-center rounded-lg bg-[var(--surface-2)] transition-all duration-200 group-hover/btn:bg-[rgba(var(--primary-color-rgb),0.1)]">
+      <Icon className={cn("h-4 w-4 text-[var(--text-secondary)] transition-colors duration-200", !disabled && "group-hover/btn:text-[var(--primary-color)]")} />
     </div>
     <div className="flex flex-col flex-1 min-w-0">
-      <span className={cn("text-[13px] font-semibold text-[var(--text-primary)] mb-[2px] transition-colors duration-200 truncate", !disabled && "group-hover/btn:text-[var(--text-accent-color)]")}>{title}</span>
+      <span className={cn("text-[13px] font-semibold text-[var(--text-primary)] mb-[2px] transition-colors duration-200 truncate", !disabled && "group-hover/btn:text-[var(--primary-color)]")}>{title}</span>
       <span className={cn("text-[11px] text-[var(--text-secondary)] transition-colors duration-200 truncate", !disabled && "group-hover/btn:text-[var(--text-primary)]")}>{subtitle}</span>
     </div>
   </div>
@@ -225,10 +225,10 @@ export function CandidatesTable({
   return (
     <div className="flex flex-col">
       {/* Controls */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-5 bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/[0.09] rounded-[var(--radius-md)] mb-4 shadow-sm">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-5 bg-[var(--header-floating-bg)] border border-[var(--header-floating-border)] rounded-[var(--radius-md)] mb-4 shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09)] transition-all hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] hover:border-[rgba(var(--primary-color-rgb),0.28)]">
         <div className="flex items-center gap-3">
           <Select value={statusFilter || "all"} onValueChange={(val) => setStatusFilter(val === "all" ? "" : val)}>
-            <SelectTrigger className="h-10 min-w-[160px] rounded-xl bg-[var(--surface-2)] shadow-sm border-[var(--border-color-light)] focus:ring-primary">
+            <SelectTrigger className="h-10 min-w-[160px] rounded-xl bg-background shadow-sm border-[var(--header-floating-border)] focus:ring-[var(--primary-color)]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -253,7 +253,7 @@ export function CandidatesTable({
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative w-full sm:w-[280px]">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-muted)]" />
             <Input
               type="text"
               placeholder="Search candidates..."
@@ -297,193 +297,195 @@ export function CandidatesTable({
       {/* List */}
       <div className="flex flex-col gap-4">
         {paginatedCandidates.length === 0 ? (
-          <div className="py-12 text-center text-muted-foreground flex flex-col items-center justify-center gap-3 bg-[var(--surface-1)] rounded-[var(--radius-md)] border border-[var(--border-color-light)]">
+          <div className="py-12 text-center text-muted-foreground flex flex-col items-center justify-center gap-3 bg-[var(--header-floating-bg)] rounded-[var(--radius-md)] border border-[var(--header-floating-border)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09)]">
             <Users className="h-8 w-8 opacity-50" />
             <p>No candidates found matching your filters.</p>
           </div>
         ) : (
-          paginatedCandidates.map((candidate) => {
-            const isCompleted = candidate.status === "completed";
-            const report = candidate.reports && candidate.reports.length > 0 ? candidate.reports[0] : null;
-            const hasScreening = !!report?.screening_evaluation && ['screening_passed', 'screening_rejected'].includes(candidate.status || '');
-            const scoreLabel = isCompleted ? "Score" : "Screening Score";
-            
-            let scoreValue: number | null | undefined = null;
-            if (isCompleted && report) {
-              scoreValue = report.score ? parseFloat(report.score) : null;
-            } else if (!isCompleted && report?.screening_score) {
-              scoreValue = parseFloat(report.screening_score);
-            } else if (candidate.score !== null && candidate.score !== undefined) {
-              scoreValue = typeof candidate.score === 'string' ? parseFloat(candidate.score) : candidate.score;
-            }
+          <div className="flex flex-col gap-3">
+            {paginatedCandidates.map((candidate) => {
+              const isCompleted = candidate.status === "completed";
+              const report = candidate.reports && candidate.reports.length > 0 ? candidate.reports[0] : null;
+              const hasScreening = !!report?.screening_evaluation && ['screening_passed', 'screening_rejected'].includes(candidate.status || '');
+              const scoreLabel = isCompleted ? "Score" : "Screening Score";
+              
+              let scoreValue: number | null | undefined = null;
+              if (isCompleted && report) {
+                scoreValue = report.score ? parseFloat(report.score) : null;
+              } else if (!isCompleted && report?.screening_score) {
+                scoreValue = parseFloat(report.screening_score);
+              } else if (candidate.score !== null && candidate.score !== undefined) {
+                scoreValue = typeof candidate.score === 'string' ? parseFloat(candidate.score) : candidate.score;
+              }
 
-            const dateStr = renderDate(candidate);
+              const dateStr = renderDate(candidate);
 
-            return (
-              <div 
-                key={candidate.id} 
-                className={cn(
-                  "group flex flex-col sm:flex-row sm:items-center rounded-[var(--radius-md)] border-[1.5px] border-[var(--border-color)] bg-[var(--surface-2)] dark:border-white/[0.09] transition-all duration-300 hover:border-[rgba(var(--primary-color-rgb),0.4)] hover:shadow-[0_8px_24px_rgba(var(--shadow-rgb),0.08)] hover:-translate-y-[2px] overflow-hidden relative min-h-[80px]",
-                  isSelecting && candidate.id && selectedIds.has(candidate.id) && "border-[rgba(var(--primary-color-rgb),0.6)] bg-[rgba(var(--primary-color-rgb),0.03)] shadow-[0_4px_16px_rgba(var(--primary-color-rgb),0.2)]"
-                )}
-              >
-                {/* Accent border top on hover */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[rgba(var(--primary-color-rgb),0.3)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10" />
+              return (
+                <div 
+                  key={candidate.id} 
+                  className={cn(
+                    "group flex flex-col sm:flex-row sm:items-center rounded-[var(--radius-md)] border-[1.5px] border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09)] transition-all duration-300 hover:border-[rgba(var(--primary-color-rgb),0.4)] hover:shadow-[0_8px_24px_rgba(var(--shadow-rgb),0.12)] hover:-translate-y-[2px] overflow-hidden relative min-h-[80px]",
+                    isSelecting && candidate.id && selectedIds.has(candidate.id) && "border-[rgba(var(--primary-color-rgb),0.6)] bg-[rgba(var(--primary-color-rgb),0.03)] shadow-[0_4px_16px_rgba(var(--primary-color-rgb),0.2)]"
+                  )}
+                >
+                  {/* Accent border top on hover */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[rgba(var(--primary-color-rgb),0.3)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10" />
 
-                {isSelecting && (
-                  <div className="flex items-center justify-center p-[16px] sm:p-[18px_16px] shrink-0" onClick={(e) => e.stopPropagation()}>
-                    <Checkbox 
-                      checked={candidate.id ? selectedIds.has(candidate.id) : false}
-                      onCheckedChange={() => candidate.id && toggleSelection(candidate.id)}
-                      className="h-5 w-5 rounded-[4px] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:border-[var(--primary-color)]"
-                    />
-                  </div>
-                )}
-
-                {/* Section 1: Info */}
-                <Section className={cn("flex-[1.5] flex-col items-start justify-center", isSelecting && "sm:pl-0")}>
-                  <div className="flex items-center gap-[10px] min-w-0 w-full">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[rgba(var(--primary-color-rgb),0.15)] to-[rgba(var(--primary-color-rgb),0.08)] border border-[rgba(var(--primary-color-rgb),0.2)] shadow-[0_2px_8px_rgba(var(--primary-color-rgb),0.1)] transition-all duration-300">
-                      <UserIcon className="h-[18px] w-[18px] text-[var(--icon-accent-color)]" />
-                    </div>
-                    <div className="flex flex-col flex-1 min-w-0">
-                      <h4 className="text-[14px] font-semibold text-[var(--text-primary)] mb-[4px] tracking-[-0.2px] truncate w-full">
-                        {candidate.first_name} {candidate.last_name}
-                      </h4>
-                      <div className="flex flex-col gap-[3px] min-w-0 w-full">
-                        <button 
-                          onClick={() => copyToClipboard(candidate.email, "Email")}
-                          className="flex items-center gap-[5px] text-[12px] text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] text-left -mx-1 px-1 py-[1px] rounded hover:bg-[rgba(var(--primary-color-rgb),0.08)] w-full overflow-hidden group/btn"
-                          title="Click to copy email"
-                        >
-                          <Mail className="h-3 w-3 shrink-0 text-[var(--icon-accent-color)] transition-transform duration-200 group-hover/btn:scale-110" />
-                          <span className="truncate">{candidate.email}</span>
-                        </button>
-                        {candidate.phone && (
-                          <button 
-                            onClick={() => copyToClipboard(candidate.phone, "Phone")}
-                            className="flex items-center gap-[5px] text-[12px] text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] text-left -mx-1 px-1 py-[1px] rounded hover:bg-[rgba(var(--primary-color-rgb),0.08)] w-full overflow-hidden max-md:hidden group/btn"
-                            title="Click to copy phone"
-                          >
-                            <Phone className="h-3 w-3 shrink-0 text-[var(--icon-accent-color)] transition-transform duration-200 group-hover/btn:scale-110" />
-                            <span className="truncate">{candidate.phone}</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Section>
-
-                <Separator />
-
-                {/* Section 2: Score */}
-                <Section className="flex-col items-start sm:items-center justify-center">
-                  <div className="flex flex-col items-start gap-[2px] p-[8px_14px] bg-[var(--glass-white-overlay-light)] backdrop-blur-[10px] rounded-[10px] border border-[var(--glass-border-light)] w-full max-w-[160px]">
-                    <span className="text-[11px] uppercase tracking-[0.5px] text-[var(--text-secondary)] opacity-80">
-                      {scoreLabel}
-                    </span>
-                    <span className={cn("text-[16px] font-bold leading-[1.2]", getScoreColor(scoreValue))}>
-                      {scoreValue !== null && scoreValue !== undefined && !isNaN(scoreValue as number) ? `${scoreValue}%` : "-"}
-                    </span>
-                  </div>
-                </Section>
-
-                <Separator />
-
-                {/* Dynamic Action Sections */}
-                {isCompleted ? (
-                  <>
-                    <Section className="justify-center">
-                      <ActionTrigger 
-                        icon={Bot} 
-                        title="AI Report" 
-                        subtitle="View assessment" 
-                        onClick={() => onViewAiReport(candidate)} 
+                  {isSelecting && (
+                    <div className="flex items-center justify-center p-[16px] sm:p-[18px_16px] shrink-0" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox 
+                        checked={candidate.id ? selectedIds.has(candidate.id) : false}
+                        onCheckedChange={() => candidate.id && toggleSelection(candidate.id)}
+                        className="h-5 w-5 rounded-[4px] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:border-[var(--primary-color)]"
                       />
-                    </Section>
-                    <Separator />
-                    <Section className="justify-center">
-                      <ActionTrigger 
-                        icon={FileText} 
-                        title="Transcript" 
-                        subtitle="View conversation" 
-                        onClick={() => onViewTranscript(candidate)} 
-                      />
-                    </Section>
-                  </>
-                ) : (
-                  <Section className="justify-center">
-                    {hasScreening ? (
-                      <ActionTrigger 
-                        icon={FileSearch} 
-                        title="Screening" 
-                        subtitle="View report" 
-                        onClick={() => onViewScreening(candidate)} 
-                      />
-                    ) : (
-                      <ActionTrigger 
-                        icon={FileText} 
-                        title="Pending" 
-                        subtitle="No report yet" 
-                        disabled 
-                      />
-                    )}
-                  </Section>
-                )}
-
-                <Separator />
-
-                {/* Status & Date */}
-                <Section className="flex-col items-start sm:items-center justify-center gap-[10px]">
-                  <span className={cn(
-                    "inline-flex items-center gap-[4px] rounded-[8px] border px-[12px] py-[6px] text-xs font-semibold shadow-[0_2px_6px_rgba(0,0,0,0.1)] transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-[0_4px_10px_rgba(0,0,0,0.15)] w-fit capitalize", 
-                    getStatusColor(candidate.status || 'pending')
-                  )}>
-                    {candidate.status?.replace("_", " ") || 'Pending'}
-                    {candidate.status === 'screening_passed' && <CheckCircle className="h-[14px] w-[14px]" />}
-                    {candidate.status === 'screening_rejected' && <XCircle className="h-[14px] w-[14px]" />}
-                  </span>
-                  
-                  {dateStr && (
-                    <div className="flex items-center justify-start sm:justify-center gap-[6px] text-[12px] text-[var(--text-secondary)] px-[10px] py-[4px] bg-[var(--glass-white-overlay-light)] backdrop-blur-[8px] rounded-[6px] border border-[var(--glass-border-light)] w-full max-w-[180px]">
-                      <Clock className="h-[12px] w-[12px] text-[var(--icon-accent-color)] shrink-0" />
-                      <span className="truncate">{dateStr}</span>
                     </div>
                   )}
-                </Section>
 
-                <Separator />
+                  {/* Section 1: Info */}
+                  <Section className={cn("flex-[1.5] flex-col items-start justify-center", isSelecting && "sm:pl-0")}>
+                    <div className="flex items-center gap-[10px] min-w-0 w-full">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[rgba(var(--primary-color-rgb),0.15)] to-[rgba(var(--primary-color-rgb),0.08)] border border-[rgba(var(--primary-color-rgb),0.2)] shadow-[0_2px_8px_rgba(var(--primary-color-rgb),0.1)] transition-all duration-300">
+                        <UserIcon className="h-[18px] w-[18px] text-[var(--icon-accent-color)]" />
+                      </div>
+                      <div className="flex flex-col flex-1 min-w-0">
+                        <h4 className="text-[14px] font-semibold text-[var(--text-primary)] mb-[4px] tracking-[-0.2px] truncate w-full">
+                          {candidate.first_name} {candidate.last_name}
+                        </h4>
+                        <div className="flex flex-col gap-[3px] min-w-0 w-full">
+                          <button 
+                            onClick={() => copyToClipboard(candidate.email, "Email")}
+                            className="flex items-center gap-[5px] text-[12px] text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] text-left -mx-1 px-1 py-[1px] rounded hover:bg-[rgba(var(--primary-color-rgb),0.08)] w-full overflow-hidden group/btn"
+                            title="Click to copy email"
+                          >
+                            <Mail className="h-3 w-3 shrink-0 text-[var(--icon-accent-color)] transition-transform duration-200 group-hover/btn:scale-110" />
+                            <span className="truncate">{candidate.email}</span>
+                          </button>
+                          {candidate.phone && (
+                            <button 
+                              onClick={() => copyToClipboard(candidate.phone, "Phone")}
+                              className="flex items-center gap-[5px] text-[12px] text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)] text-left -mx-1 px-1 py-[1px] rounded hover:bg-[rgba(var(--primary-color-rgb),0.08)] w-full overflow-hidden max-md:hidden group/btn"
+                              title="Click to copy phone"
+                            >
+                              <Phone className="h-3 w-3 shrink-0 text-[var(--icon-accent-color)] transition-transform duration-200 group-hover/btn:scale-110" />
+                              <span className="truncate">{candidate.phone}</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </Section>
 
-                {/* Dropdown Actions */}
-                <div className="flex-none p-[16px] sm:p-[8px_12px] min-w-[60px] flex items-center justify-center shrink-0" onClick={(e) => e.stopPropagation()}>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0 rounded-xl hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)]">
-                        <MoreVertical className="h-5 w-5" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.12)]">
-                      <DropdownMenuItem 
-                        disabled={!candidate.has_resume_file}
-                        onClick={() => onDownloadResume(candidate)}
-                        className="py-2.5 font-medium"
-                      >
-                        <Download className="mr-2 h-4 w-4 text-muted-foreground" />
-                        Download Resume
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Separator />
+
+                  {/* Section 2: Score */}
+                  <Section className="flex-col items-start sm:items-center justify-center">
+                    <div className="flex flex-col items-start gap-[2px] p-[8px_14px] bg-background/50 backdrop-blur-[10px] rounded-[10px] border border-[var(--header-floating-border)] w-full max-w-[160px]">
+                      <span className="text-[11px] uppercase tracking-[0.5px] text-[var(--text-secondary)] opacity-80">
+                        {scoreLabel}
+                      </span>
+                      <span className={cn("text-[16px] font-bold leading-[1.2]", getScoreColor(scoreValue))}>
+                        {scoreValue !== null && scoreValue !== undefined && !isNaN(scoreValue as number) ? `${scoreValue}%` : "-"}
+                      </span>
+                    </div>
+                  </Section>
+
+                  <Separator />
+
+                  {/* Dynamic Action Sections */}
+                  {isCompleted ? (
+                    <>
+                      <Section className="justify-center">
+                        <ActionTrigger 
+                          icon={Bot} 
+                          title="AI Report" 
+                          subtitle="View assessment" 
+                          onClick={() => onViewAiReport(candidate)} 
+                        />
+                      </Section>
+                      <Separator />
+                      <Section className="justify-center">
+                        <ActionTrigger 
+                          icon={FileText} 
+                          title="Transcript" 
+                          subtitle="View conversation" 
+                          onClick={() => onViewTranscript(candidate)} 
+                        />
+                      </Section>
+                    </>
+                  ) : (
+                    <Section className="justify-center">
+                      {hasScreening ? (
+                        <ActionTrigger 
+                          icon={FileSearch} 
+                          title="Screening" 
+                          subtitle="View report" 
+                          onClick={() => onViewScreening(candidate)} 
+                        />
+                      ) : (
+                        <ActionTrigger 
+                          icon={FileText} 
+                          title="Pending" 
+                          subtitle="No report yet" 
+                          disabled 
+                        />
+                      )}
+                    </Section>
+                  )}
+
+                  <Separator />
+
+                  {/* Status & Date */}
+                  <Section className="flex-col items-start sm:items-center justify-center gap-[10px]">
+                    <span className={cn(
+                      "inline-flex items-center gap-[4px] rounded-[8px] border px-[12px] py-[6px] text-xs font-semibold shadow-sm transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-md w-fit capitalize", 
+                      getStatusColor(candidate.status || 'pending')
+                    )}>
+                      {candidate.status?.replace("_", " ") || 'Pending'}
+                      {candidate.status === 'screening_passed' && <CheckCircle className="h-[14px] w-[14px]" />}
+                      {candidate.status === 'screening_rejected' && <XCircle className="h-[14px] w-[14px]" />}
+                    </span>
+                    
+                    {dateStr && (
+                      <div className="flex items-center justify-start sm:justify-center gap-[6px] text-[12px] text-[var(--text-secondary)] px-[10px] py-[4px] bg-background/50 backdrop-blur-[8px] rounded-[6px] border border-[var(--header-floating-border)] w-full max-w-[180px]">
+                        <Clock className="h-[12px] w-[12px] text-[var(--icon-accent-color)] shrink-0" />
+                        <span className="truncate">{dateStr}</span>
+                      </div>
+                    )}
+                  </Section>
+
+                  <Separator />
+
+                  {/* Dropdown Actions */}
+                  <div className="flex-none p-[16px] sm:p-[8px_12px] min-w-[60px] flex items-center justify-center shrink-0" onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-10 w-10 shrink-0 rounded-xl hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] text-[var(--text-secondary)]">
+                          <MoreVertical className="h-5 w-5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 rounded-xl shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.12)] border-[var(--header-floating-border)] bg-[var(--header-floating-bg)]">
+                        <DropdownMenuItem 
+                          disabled={!candidate.has_resume_file}
+                          onClick={() => onDownloadResume(candidate)}
+                          className="py-2.5 font-medium hover:bg-[var(--surface-2)]"
+                        >
+                          <Download className="mr-2 h-4 w-4 text-[var(--text-muted)]" />
+                          Download Resume
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         )}
       </div>
 
       {/* Pagination */}
       {filteredCandidates.length > 0 && (
-        <div className="mt-6 flex flex-col items-center justify-between gap-4 pt-4 border-t border-[var(--border-color-light)] dark:border-white/[0.09] sm:flex-row">
-          <div className="text-sm font-medium text-muted-foreground">
+        <div className="mt-6 flex flex-col items-center justify-between gap-4 pt-4 sm:flex-row">
+          <div className="text-sm font-medium text-[var(--text-secondary)]">
             {filteredCandidates.length > 0 ? `${(page - 1) * pageSize + 1}-${Math.min(page * pageSize, filteredCandidates.length)} of ${filteredCandidates.length} candidates` : ''}
           </div>
           
@@ -492,7 +494,7 @@ export function CandidatesTable({
               value={pageSize.toString()} 
               onValueChange={(val) => { setPageSize(Number(val)); setPage(1); }}
             >
-              <SelectTrigger className="h-9 w-[110px] rounded-xl border-[var(--border-color-light)] bg-[var(--surface-1)]">
+              <SelectTrigger className="h-9 w-[110px] rounded-xl border-[var(--header-floating-border)] bg-background text-[var(--text-primary)] shadow-sm">
                 <SelectValue placeholder="10 / page" />
               </SelectTrigger>
               <SelectContent>
@@ -507,7 +509,7 @@ export function CandidatesTable({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-9 w-9 rounded-xl border-[var(--border-color-light)] bg-[var(--surface-1)] hover:bg-[var(--surface-2)]"
+                className="h-9 w-9 rounded-xl border-[var(--header-floating-border)] bg-background text-[var(--text-primary)] hover:bg-[var(--surface-2)] shadow-sm"
                 disabled={page === 1}
                 onClick={() => setPage(p => Math.max(1, p - 1))}
               >
@@ -516,7 +518,7 @@ export function CandidatesTable({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-9 w-9 rounded-xl border-[var(--border-color-light)] bg-[var(--surface-1)] hover:bg-[var(--surface-2)]"
+                className="h-9 w-9 rounded-xl border-[var(--header-floating-border)] bg-background text-[var(--text-primary)] hover:bg-[var(--surface-2)] shadow-sm"
                 disabled={page >= Math.ceil(filteredCandidates.length / pageSize)}
                 onClick={() => setPage(p => p + 1)}
               >

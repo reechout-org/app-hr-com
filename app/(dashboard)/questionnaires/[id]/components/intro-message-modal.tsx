@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { validateFirstMessageTemplateClient } from "@/lib/utils/first-message-template";
+import { toast } from "sonner";
 
 interface IntroMessageModalProps {
   isOpen: boolean;
@@ -17,6 +19,15 @@ interface IntroMessageModalProps {
 export function IntroMessageModal({ isOpen, isUpdating, initialMessage, onClose, onConfirm }: IntroMessageModalProps) {
   const [message, setMessage] = useState("");
 
+  const handleConfirm = () => {
+    const err = validateFirstMessageTemplateClient(message);
+    if (err) {
+      toast.error(err);
+      return;
+    }
+    onConfirm(message);
+  };
+
   useEffect(() => {
     if (isOpen) {
       // Use setTimeout to avoid set-state-in-effect warning
@@ -27,7 +38,7 @@ export function IntroMessageModal({ isOpen, isUpdating, initialMessage, onClose,
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isUpdating && onClose()}>
-      <DialogContent className="max-w-[600px] w-[95vw] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[var(--radius-md)] dark:border-white/[0.09]">
+      <DialogContent className="max-w-[600px] w-[95vw] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09]">
         <DialogHeader className="border-b border-[var(--border-color-light)] bg-[var(--surface-2)] dark:border-white/[0.09] px-6 py-4">
           <DialogTitle className="text-base font-semibold text-foreground">
             Edit Intro Message Template
@@ -55,7 +66,7 @@ export function IntroMessageModal({ isOpen, isUpdating, initialMessage, onClose,
           </div>
         </div>
 
-        <DialogFooter className="border-t border-[var(--border-color-light)] bg-[var(--surface-2)] p-5 sm:justify-end gap-3 dark:border-white/[0.09]">
+        <DialogFooter className="border-t border-[var(--border-color-light)] bg-[var(--surface-2)] sm:justify-end gap-3 dark:border-white/[0.09]">
           <Button
             variant="outline"
             disabled={isUpdating}
@@ -66,7 +77,7 @@ export function IntroMessageModal({ isOpen, isUpdating, initialMessage, onClose,
           </Button>
           <Button
             disabled={!message.trim() || isUpdating}
-            onClick={() => onConfirm(message)}
+            onClick={handleConfirm}
             className="h-10 rounded-xl px-4 text-sm font-semibold"
           >
             {isUpdating ? "Saving..." : "Save Template"}

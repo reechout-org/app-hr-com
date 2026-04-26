@@ -27,16 +27,7 @@ export default function ResetPasswordPage() {
               <AuthWordmark href="/" />
             </AuthMobileLogoRow>
 
-            <Suspense
-              fallback={
-                <div className={authSuspenseFallbackClassName}>
-                  <div
-                    className="h-8 w-8 animate-spin rounded-full border-[3px] border-[var(--border)] border-t-[var(--primary-color)]"
-                    aria-hidden
-                  />
-                </div>
-              }
-            >
+            <Suspense fallback={<div className={authSuspenseFallbackClassName} />}>
               <ResetPasswordForm />
             </Suspense>
           </AuthFormStack>

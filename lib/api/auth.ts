@@ -104,12 +104,14 @@ export const authApi = {
   },
 
   /**
-   * `POST ${apiUrl}/auth/fcm-token` with `{ token, device_id }`.
+   * `POST ${apiUrl}/auth/fcm-token` with `{ token, device_id, device_type }`.
+   * Matches Angular `NotificationService.registerFCMToken` (`device_type: 'web'`).
    */
   registerFCMToken: async (token: string, deviceId: string): Promise<ApiEnvelope<unknown>> => {
     const { data } = await apiClient.post<ApiEnvelope<unknown>>(AUTH_API_PATHS.registerFCMToken, {
       token,
       device_id: deviceId,
+      device_type: "web",
     });
     return data;
   },

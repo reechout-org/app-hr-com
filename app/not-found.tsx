@@ -22,7 +22,7 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button asChild size="lg" className="h-12 px-8 rounded-full shadow-lg shadow-primary/20">
+          <Button asChild size="lg" className="h-12 px-8 rounded-[var(--radius-md)] shadow-lg shadow-primary/20">
             <Link href="/">
               <Home className="mr-2 h-5 w-5" />
               Return Home
@@ -31,7 +31,7 @@ export default function NotFound() {
           <Button 
             variant="ghost" 
             size="lg" 
-            className="h-12 px-8 rounded-full" 
+            className="h-12 px-8 rounded-[var(--radius-md)]" 
             onClick={() => router.back()}
           >
             <MoveLeft className="mr-2 h-5 w-5" />

@@ -60,7 +60,7 @@ export function PersonaModal({ isOpen, onClose, title, attributes = [], persona 
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[1200px] w-[95vw] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[var(--radius-md)] max-h-[85vh] flex flex-col dark:border-white/[0.09]">
+      <DialogContent className="max-w-[1200px] w-[95vw] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] max-h-[85vh] flex flex-col dark:border-white/[0.09]">
         <DialogHeader className="shrink-0 border-b border-[var(--border-color-light)] bg-[var(--surface-2)] dark:border-white/[0.09] px-6 py-4 text-left flex flex-row items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -75,7 +75,7 @@ export function PersonaModal({ isOpen, onClose, title, attributes = [], persona 
 
         <div className="flex flex-1 min-h-0 w-full flex-col bg-transparent md:flex-row overflow-hidden">
           {/* Sidebar Navigation */}
-          <div className="flex w-full flex-none flex-col overflow-y-auto border-b border-[var(--border-color-light)] bg-[var(--surface-2)] dark:border-white/[0.09] p-6 md:w-[280px] md:border-b-0 md:border-r md:border-[var(--border-color-light)] dark:md:border-white/[0.09]" data-lenis-prevent>
+          <div className="flex w-full flex-none flex-col overflow-y-auto border-b border-[var(--border-color-light)] bg-[var(--surface-2)] dark:border-white/[0.09] p-6 md:w-[280px] md:border-b-0 md:border-r md:border-[var(--border-color-light)] dark:md:border-white/[0.09]">
             <h4 className="mb-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Overview & Details</h4>
             <div className="flex flex-col gap-1">
               {activeNavItems.map((item) => {
@@ -101,7 +101,7 @@ export function PersonaModal({ isOpen, onClose, title, attributes = [], persona 
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 w-full min-w-0 overflow-y-auto p-6 md:p-8 flex flex-col gap-8" onScroll={handleScroll} data-lenis-prevent>
+          <div className="flex-1 w-full min-w-0 overflow-y-auto p-6 md:p-8 flex flex-col gap-8" onScroll={handleScroll}>
             {activeNavItems.map((item) => {
               const Icon = item.icon;
               return (

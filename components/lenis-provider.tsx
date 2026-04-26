@@ -1,6 +1,7 @@
 "use client";
 
 import Lenis from "lenis";
+import { usePathname } from "next/navigation";
 import {
   createContext,
   useContext,
@@ -12,16 +13,38 @@ import {
 
 const LenisContext = createContext<Lenis | null>(null);
 
+/** Smooth scroll (Lenis) only on marketing / static site routes — not dashboard, auth, or candidate flows. */
+export function isLenisEnabledPath(path: string | null): boolean {
+  if (!path) return false;
+  if (path === "/") return true;
+  if (path.startsWith("/blog/")) return true;
+  const exact = new Set([
+    "/about-us",
+    "/contact",
+    "/reports",
+    "/questionnaire",
+    "/terms-of-service",
+    "/privacy-policy",
+    "/security",
+    "/blog",
+  ]);
+  return exact.has(path);
+}
+
 export function useLenis(): Lenis | null {
   return useContext(LenisContext);
 }
 
 export function LenisProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const enabled = isLenisEnabledPath(pathname);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches) return;
+    if (mq.matches || !enabled) {
+      return;
+    }
 
     const instance = new Lenis({
       lerp: 0.09,
@@ -38,7 +61,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
         setLenis(null);
       });
     };
-  }, []);
+  }, [enabled]);
 
   const value = useMemo(() => lenis, [lenis]);
 

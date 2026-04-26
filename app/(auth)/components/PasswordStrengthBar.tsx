@@ -35,7 +35,7 @@ export default function PasswordStrengthBar({ password }: { password: string }) 
       </div>
       {password ? (
         <span
-          className="whitespace-nowrap text-xs font-medium"
+          className="whitespace-nowrap text-[13px] font-medium"
           style={{ color: strength.color }}
         >
           {strength.label}

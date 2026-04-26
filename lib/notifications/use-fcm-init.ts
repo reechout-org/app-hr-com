@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 
 import { authApi } from "@/lib/api/auth";
+import { hasClientSession } from "@/lib/auth/auth-token";
 import { getFirebaseConfig } from "@/lib/config/firebase-config";
-import { useAuthStore } from "@/lib/store/auth.store";
 import { useNotificationStore, type QuestionnaireUpdate } from "@/lib/store/notification-store";
 
 /**
@@ -48,17 +48,21 @@ function showBrowserNotification(payload: any) {
 
 /**
  * Next.js equivalent of Angular's NotificationService constructor logic.
- * Declaratively listens to Auth state and dynamically imports Firebase
- * only when a user is authenticated, reducing initial bundle size.
+ * Declaratively initializes when a session exists (`token` in localStorage), so it
+ * still runs after a full page refresh (Zustand `user` is not rehydrated).
+ * Session = access or refresh token in localStorage.
  */
 export function useFcmInit() {
-  const user = useAuthStore((s) => s.user);
   const setLatestUpdate = useNotificationStore((s) => s.setLatestUpdate);
   const isInitialized = useRef(false);
 
   useEffect(() => {
-    // Only initialize if we're on the client, a user is logged in, and we haven't already initialized
-    if (typeof window === "undefined" || !user || isInitialized.current) return;
+    if (typeof window === "undefined") return;
+    if (!hasClientSession()) {
+      isInitialized.current = false;
+      return;
+    }
+    if (isInitialized.current) return;
 
     const initFirebase = async () => {
       try {
@@ -116,5 +120,5 @@ export function useFcmInit() {
     };
 
     initFirebase();
-  }, [user, setLatestUpdate]);
+  }, [setLatestUpdate]);
 }

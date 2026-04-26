@@ -66,10 +66,10 @@ export const authTitleFlushClassName = "mb-0";
 export const authSuspenseFallbackClassName = "flex items-center justify-center p-12";
 
 export const authLinkPlainClassName =
-  "cursor-pointer border-0 bg-transparent p-0 text-[13px] text-[var(--text-muted)]";
+  "cursor-pointer border-0 bg-transparent p-0 text-[14px] text-[var(--text-muted)]";
 
 export const authSubmitButtonClassName = cn(
-  "relative w-full cursor-pointer overflow-hidden rounded-[10px] border border-white/10 font-bold tracking-wide text-white",
+  "relative w-full cursor-pointer overflow-hidden rounded-[10px] border border-white/10 font-bold tracking-wide text-white text-[15px]",
   "h-[46px] shadow-[0_4px_14px_rgba(var(--primary-color-rgb),0.35),inset_0_1px_0_rgba(255,255,255,0.2)]",
   "bg-gradient-to-b from-[var(--color-primary)] to-[var(--color-primary-hover)]",
   "transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
@@ -80,10 +80,10 @@ export const authSubmitButtonClassName = cn(
 );
 
 export const authLabelClassName =
-  "mb-2 block text-[13px] font-medium text-[var(--text-body)]";
+  "mb-2 block text-[14px] font-medium text-[var(--text-body)]";
 
 export const authCardClassName = cn(
-  "relative overflow-hidden rounded-[24px] max-sm:rounded-[20px] border border-[color-mix(in_srgb,var(--foreground)_6%,transparent)]",
+  "relative overflow-hidden rounded-[var(--radius-md)] border border-[color-mix(in_srgb,var(--foreground)_6%,transparent)]",
   "bg-[linear-gradient(160deg,color-mix(in_srgb,var(--bg-card)_90%,transparent)_0%,var(--bg-card)_100%)]",
   "shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08),0_0_0_1px_rgba(var(--color-primary-rgb),0.03),0_8px_40px_rgba(var(--color-primary-rgb),0.04)]",
   "backdrop-blur-[16px] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4),0_0_0_1px_rgba(var(--color-primary-rgb),0.05),0_8px_40px_rgba(var(--color-primary-rgb),0.08)]",
@@ -92,25 +92,25 @@ export const authCardClassName = cn(
 export const authCardInnerClassName = "relative z-10 px-10 py-10 max-md:px-6 max-md:py-8";
 
 export const authCardTitleClassName =
-  "mb-1.5 text-center text-[1.4rem] font-extrabold tracking-[-0.02em] text-[var(--text-heading)]";
+  "mb-2 text-center text-[1.65rem] font-extrabold tracking-[-0.02em] text-[var(--text-heading)]";
 
 export const authCardSubtitleClassName =
-  "m-0 text-center text-[13px] leading-[1.5] text-[var(--text-muted)]";
+  "m-0 text-center text-[15px] leading-[1.5] text-[var(--text-muted)]";
 
 export const authSignInTextClassName =
-  "block text-center text-[13px] text-[var(--text-muted)]";
+  "block text-center text-[14px] text-[var(--text-muted)]";
 
 export const authSignInLinkClassName =
   "ml-1 font-semibold text-[var(--color-primary)] no-underline transition-colors hover:text-[var(--color-primary-hover)]";
 
 export const authForgotLinkClassName =
-  "text-[13px] font-medium text-[var(--color-primary)] no-underline transition-colors hover:text-[var(--color-primary-hover)]";
+  "text-[14px] font-medium text-[var(--color-primary)] no-underline transition-colors hover:text-[var(--color-primary-hover)]";
 
 export const authBackLinkClassName =
-  "inline-flex items-center gap-1.5 text-[13px] font-semibold text-[var(--color-primary)] no-underline transition-colors hover:text-[var(--color-primary-hover)]";
+  "inline-flex items-center gap-1.5 text-[14px] font-semibold text-[var(--color-primary)] no-underline transition-colors hover:text-[var(--color-primary-hover)]";
 
 export const authFormErrorBoxClassName = cn(
-  "rounded-lg border px-3.5 py-2.5 text-[13px] font-medium text-[var(--destructive)]",
+  "rounded-lg border px-3.5 py-2.5 text-[14px] font-medium text-[var(--destructive)]",
   "border-[color-mix(in_srgb,var(--destructive)_20%,transparent)]",
   "bg-[color-mix(in_srgb,var(--destructive)_8%,transparent)]",
 );

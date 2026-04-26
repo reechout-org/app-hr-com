@@ -181,7 +181,7 @@ export function ContactPageView() {
               initial={{ opacity: 0, y: 36 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.65, ease: EASE, delay: 0.2 }}
-              className="relative overflow-hidden rounded-[24px] border border-[var(--border-color-light)] bg-[var(--background-color)] p-[clamp(1.5rem,4vw,2.75rem)] shadow-[var(--shadow-light)] dark:border-white/[0.09] dark:bg-[var(--surface-1)]"
+              className="relative overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--background-color)] p-[clamp(1.5rem,4vw,2.75rem)] shadow-[var(--shadow-light)] dark:border-white/[0.09] dark:bg-[var(--surface-1)]"
             >
               <div
                 className="pointer-events-none absolute -right-20 -top-20 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(var(--primary-color-rgb),0.12)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(var(--accent-violet-rgb),0.14)_0%,transparent_70%)]"

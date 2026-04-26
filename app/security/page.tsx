@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     description: SECURITY_PAGE_METADATA.description,
     type: "website",
     url: securityPageCanonical,
+    siteName: "ReechOut",
     locale: "en_US",
     images: [{ url: MARKETING_OG_IMAGE }],
   },

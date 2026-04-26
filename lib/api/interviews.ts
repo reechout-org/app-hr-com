@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import { getPublicApiBaseUrl } from "@/lib/config/env";
 
 export interface QuestionEvaluation {
   question_text: string;
@@ -60,6 +61,15 @@ export interface CandidateReport {
   } | null;
 }
 
+/** Nested interview summary on candidate GET (scheduling / share link). */
+export interface CandidatePortalInterview {
+  id: string;
+  questionnaire_title: string;
+  status: string;
+  deadline?: string | null;
+  type?: string;
+}
+
 export interface InterviewCandidate {
   id?: string;
   first_name: string;
@@ -77,6 +87,97 @@ export interface InterviewCandidate {
   reports?: CandidateReport[];
   created_at?: string;
   updated_at?: string;
+  interview?: CandidatePortalInterview;
+}
+
+function candidatePortalErrorMessage(body: unknown): string {
+  if (body && typeof body === "object") {
+    const o = body as Record<string, unknown>;
+    if (typeof o.message === "string") return o.message;
+    const d = o.detail;
+    if (typeof d === "string") return d;
+    if (d && typeof d === "object" && "message" in d && typeof (d as { message: string }).message === "string") {
+      return (d as { message: string }).message;
+    }
+  }
+  return "Request failed";
+}
+
+/**
+ * Candidate scheduling page: no employer Bearer token — only `X-Access-Token` (matches Angular `getCandidate`).
+ */
+export async function getCandidatePortal(
+  candidateId: string,
+  accessToken: string
+): Promise<InterviewCandidate> {
+  const base = getPublicApiBaseUrl();
+  const res = await fetch(
+    `${base}/api/interviews/candidates/${encodeURIComponent(candidateId)}/`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "X-Access-Token": accessToken,
+      },
+    }
+  );
+  let body: unknown = {};
+  try {
+    body = await res.json();
+  } catch {
+    body = {};
+  }
+  if (!res.ok) {
+    throw new Error(candidatePortalErrorMessage(body));
+  }
+  return body as InterviewCandidate;
+}
+
+/**
+ * Candidate scheduling submit: multipart PUT with token (matches Angular `updateCandidateWithFile`).
+ */
+export async function updateCandidatePortal(
+  candidateId: string,
+  interviewId: string,
+  accessToken: string,
+  fields: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    scheduleDateIso: string;
+  }
+): Promise<unknown> {
+  const formData = new FormData();
+  formData.append("interview_id", interviewId);
+  formData.append("first_name", fields.firstName);
+  formData.append("last_name", fields.lastName);
+  formData.append("email", fields.email);
+  formData.append("phone", fields.phone);
+  formData.append("schedule_date", fields.scheduleDateIso);
+  formData.append("id", candidateId);
+
+  const base = getPublicApiBaseUrl();
+  const res = await fetch(
+    `${base}/api/interviews/candidates/${encodeURIComponent(candidateId)}/`,
+    {
+      method: "PUT",
+      headers: {
+        "X-Access-Token": accessToken,
+      },
+      body: formData,
+    }
+  );
+  let body: unknown = {};
+  try {
+    body = await res.json();
+  } catch {
+    body = {};
+  }
+  if (!res.ok) {
+    throw new Error(candidatePortalErrorMessage(body));
+  }
+  return body;
 }
 
 export interface AddCandidateRequest {
@@ -109,6 +210,9 @@ export interface Interview {
   created_at: string;
   updated_at: string;
   deadline?: string | null;
+  /** Onsite invite email—populated on interview detail GET (Django `InterviewDetailView.retrieve`). */
+  onsite_interview_email_template?: string;
+  onsite_interview_email_subject?: string;
 }
 
 export interface InterviewListItem {
@@ -126,6 +230,13 @@ export interface PaginatedInterviewResponse {
   next: string | null;
   previous: string | null;
   results: InterviewListItem[];
+}
+
+/** Signed URL payload from GET `/api/interviews/candidates/:id/resume/download/` (Django + FastAPI). */
+export interface CandidateResumeDownloadResponse {
+  download_url: string;
+  candidate_name?: string;
+  expires_in_minutes?: number;
 }
 
 export const interviewsApi = {
@@ -161,6 +272,13 @@ export const interviewsApi = {
   getCandidateReport: async (candidateId: string) => {
     const { data } = await apiClient.get<CandidateReport>(
       `/api/interviews/candidates/${candidateId}/report/`
+    );
+    return data;
+  },
+
+  downloadCandidateResume: async (candidateId: string) => {
+    const { data } = await apiClient.get<CandidateResumeDownloadResponse>(
+      `/api/interviews/candidates/${candidateId}/resume/download/`
     );
     return data;
   },

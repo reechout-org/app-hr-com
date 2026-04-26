@@ -34,6 +34,7 @@ export const metadata: Metadata = {
     description: BLOG_METADATA.description,
     type: "website",
     url: blogCanonical,
+    siteName: "ReechOut",
     locale: "en_US",
     images: [{ url: MARKETING_OG_IMAGE }],
   },

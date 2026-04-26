@@ -44,6 +44,7 @@ export const metadata: Metadata = {
     description: REPORTS_METADATA.description,
     type: "website",
     url: reportsCanonical,
+    siteName: "ReechOut",
     locale: "en_US",
     images: [{ url: MARKETING_OG_IMAGE }],
   },

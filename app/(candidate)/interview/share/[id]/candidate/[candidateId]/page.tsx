@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, AlertCircle } from "lucide-react";
+import { Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -12,16 +12,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/ui/cn";
+import { getCandidatePortal, updateCandidatePortal } from "@/lib/api/interviews";
 
 interface SharePageProps {
-  params: Promise<{ id: string, candidateId: string }>;
+  params: Promise<{ id: string; candidateId: string }>;
+}
+
+function toDatetimeLocalValue(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 export default function CandidateSharePage({ params }: SharePageProps) {
   const searchParams = useSearchParams();
-  const token = searchParams.get('token');
-  
-  const { candidateId } = use(params);
+  const token = searchParams.get("token");
+
+  const { id: interviewId, candidateId } = use(params);
 
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
@@ -30,85 +36,94 @@ export default function CandidateSharePage({ params }: SharePageProps) {
     email: "",
     phone: "",
     preferredDateTime: "",
-    consent: false
+    consent: false,
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Since we don't have the exact API endpoint implemented in lib/api/interviews.ts yet,
-  // we will mock the exact fetching logic angular expects using fetch directly if needed,
-  // or we can extend interviewsApi if we want. For now, we simulate the `getCandidate` call:
   const { data: candidateData, isLoading, isError, error } = useQuery({
     queryKey: ["candidate-share", candidateId, token],
-    queryFn: async () => {
+    queryFn: () => {
       if (!candidateId || !token) throw new Error("Invalid link");
-      const res = await fetch(`/api/interviews/candidates/${candidateId}/?token=${token}`);
-      if (!res.ok) {
-        if (res.status === 401 || res.status === 403) throw new Error("Invalid or expired token. Please use the link provided in your email.");
-        if (res.status === 404) throw new Error("Candidate not found. Please use the link provided in your email.");
-        throw new Error("Failed to load candidate information. Please try again.");
-      }
-      return res.json();
+      return getCandidatePortal(candidateId, token);
     },
     enabled: !!candidateId && !!token,
-    retry: false
+    retry: false,
   });
 
-  // Pre-fill form when data loads
   useEffect(() => {
-    if (candidateData) {
-      setTimeout(() => {
-        const preferredDate = candidateData.schedule_date 
-          ? new Date(candidateData.schedule_date).toISOString().slice(0, 16) 
-          : "";
-        setFormData({
-          firstName: candidateData.first_name || "",
-          lastName: candidateData.last_name || "",
-          email: candidateData.email || "",
-          phone: candidateData.phone || "",
-          preferredDateTime: preferredDate,
-          consent: false
-        });
-      }, 0);
-    }
+    if (!candidateData) return;
+    const preferredDate = candidateData.schedule_date
+      ? toDatetimeLocalValue(new Date(candidateData.schedule_date))
+      : "";
+    setFormData({
+      firstName: candidateData.first_name || "",
+      lastName: candidateData.last_name || "",
+      email: candidateData.email || "",
+      phone: candidateData.phone || "",
+      preferredDateTime: preferredDate,
+      consent: false,
+    });
   }, [candidateData]);
 
   const submitMutation = useMutation({
-    mutationFn: async (payload: Record<string, unknown>) => {
-      const res = await fetch(`/api/interviews/candidates/${candidateId}/register/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // or however the backend expects the token
-        },
-        body: JSON.stringify(payload)
+    mutationFn: () => {
+      if (!candidateId || !token || !interviewId) {
+        throw new Error("Invalid link");
+      }
+      return updateCandidatePortal(candidateId, interviewId, token, {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        scheduleDateIso: new Date(formData.preferredDateTime).toISOString(),
       });
-      if (!res.ok) throw new Error("Failed to register");
-      return res.json();
     },
     onSuccess: () => {
       setSubmitted(true);
+      toast.success("Successfully updated your interview registration!");
     },
-    onError: () => {
-      toast.error("Registration Failed", { description: "There was an error submitting your registration. Please try again." });
-    }
+    onError: (err: Error) => {
+      toast.error(err.message || "Failed to update your interview registration. Please try again.");
+    },
   });
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.firstName.trim() || formData.firstName.length < 2) newErrors.firstName = "Please input your first name!";
-    if (!formData.lastName.trim() || formData.lastName.length < 2) newErrors.lastName = "Please input your last name!";
-    if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Please enter a valid email address!";
-    if (!formData.phone.trim() || !/^[+]?[\d\s\-()]+$/.test(formData.phone)) newErrors.phone = "Please input your phone number!";
-    if (!formData.preferredDateTime) newErrors.preferredDateTime = "Please select your preferred interview date and time!";
-    if (!formData.consent) newErrors.consent = "You must provide consent to schedule the interview";
+    if (!formData.firstName.trim() || formData.firstName.length < 2) {
+      newErrors.firstName = "Please input your first name!";
+    }
+    if (!formData.lastName.trim() || formData.lastName.length < 2) {
+      newErrors.lastName = "Please input your last name!";
+    }
+    if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address!";
+    }
+    if (!formData.phone.trim() || !/^[+]?[\d\s\-()]+$/.test(formData.phone)) {
+      newErrors.phone = "Please input your phone number!";
+    }
+    if (!formData.preferredDateTime) {
+      newErrors.preferredDateTime = "Please select your preferred interview date and time!";
+    }
+    if (!formData.consent) {
+      newErrors.consent = "You must provide consent to schedule the interview";
+    }
 
-    // Deadline validation
     if (candidateData?.interview?.deadline && formData.preferredDateTime) {
       const selectedDate = new Date(formData.preferredDateTime);
       const deadlineDate = new Date(candidateData.interview.deadline);
       if (selectedDate > deadlineDate) {
-        newErrors.preferredDateTime = "Selected date and time cannot be after the interview deadline!";
+        newErrors.preferredDateTime =
+          "Selected date and time cannot be after the interview deadline!";
+      }
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (formData.preferredDateTime) {
+      const selected = new Date(formData.preferredDateTime);
+      if (selected < today) {
+        newErrors.preferredDateTime = "Please choose a date and time from today onward.";
       }
     }
 
@@ -119,24 +134,21 @@ export default function CandidateSharePage({ params }: SharePageProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
-    submitMutation.mutate({
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      phone: formData.phone,
-      schedule_date: new Date(formData.preferredDateTime).toISOString(),
-      consent: formData.consent
-    });
+    submitMutation.mutate();
   };
 
   if (!candidateId || !token) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--background-color)]">
-        <div className="max-w-md w-full p-8 rounded-2xl bg-[var(--surface-1)] border border-[var(--error-color)]/30 text-center flex flex-col items-center gap-4">
-          <AlertCircle className="h-12 w-12 text-[var(--error-color)]" />
-          <h2 className="text-xl font-bold text-foreground">Invalid Link</h2>
-          <p className="text-muted-foreground">Please use the exact link provided in your email invitation.</p>
+      <div className="relative flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
+        <div className="relative z-10 flex w-full max-w-md flex-col items-center gap-4 rounded-[var(--radius-md)] border border-[var(--error-color)]/20 bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--error-color-rgb),0.05)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
+          <div className="mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--error-color)]/10 ring-8 ring-[var(--error-color)]/5">
+            <AlertCircle className="h-10 w-10 text-[var(--error-color)]" />
+          </div>
+          <h2 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)]">Invalid Link</h2>
+          <p className="text-[15px] leading-relaxed text-[var(--text-secondary)]">
+            Please use the exact link provided in your email invitation (including the access token).
+          </p>
         </div>
       </div>
     );
@@ -144,154 +156,212 @@ export default function CandidateSharePage({ params }: SharePageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background-color)]">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--primary-color)] border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="h-10 w-10 animate-spin text-[var(--primary-color)]" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-[var(--background-color)]">
-        <div className="max-w-md w-full p-8 rounded-2xl bg-[var(--surface-1)] border border-[var(--error-color)]/30 text-center flex flex-col items-center gap-4">
-          <AlertCircle className="h-12 w-12 text-[var(--error-color)]" />
-          <h2 className="text-xl font-bold text-foreground">Access Denied</h2>
-          <p className="text-muted-foreground">{(error as Error).message}</p>
+      <div className="relative flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
+        <div className="relative z-10 flex w-full max-w-md flex-col items-center gap-4 rounded-[var(--radius-md)] border border-[var(--error-color)]/20 bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--error-color-rgb),0.05)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
+          <div className="mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--error-color)]/10 ring-8 ring-[var(--error-color)]/5">
+            <AlertCircle className="h-10 w-10 text-[var(--error-color)]" />
+          </div>
+          <h2 className="text-2xl font-extrabold tracking-tight text-[var(--text-primary)]">Access Denied</h2>
+          <p className="text-[15px] leading-relaxed text-[var(--text-secondary)]">{(error as Error).message}</p>
         </div>
       </div>
     );
   }
 
   const interviewDeadline = candidateData?.interview?.deadline;
+  const nowLocal = toDatetimeLocalValue(new Date());
+  const deadlineLocalMax = interviewDeadline
+    ? toDatetimeLocalValue(new Date(interviewDeadline))
+    : undefined;
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--background-color)] relative selection:bg-[var(--primary-color)]/30">
-      {/* Decorative background matching milli-derived auth pages */}
-      <div className="fixed inset-0 -z-10 bg-[radial-gradient(ellipse_at_top,rgba(var(--primary-color-rgb),0.08),transparent_50%)]" />
+    <div className="relative flex min-h-screen flex-col bg-background selection:bg-[var(--primary-color)]/30">
+      <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
 
-      {/* Main Container */}
-      <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
-        
+      <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center p-4 sm:p-8">
         {submitted ? (
-          <div className="w-full max-w-lg flex flex-col items-center text-center p-10 rounded-[32px] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/5 shadow-xl animate-in fade-in zoom-in-95 duration-500">
-            <div className="w-20 h-20 bg-[var(--success-color)]/10 text-[var(--success-color)] rounded-full flex items-center justify-center mb-6">
-              <CheckCircle2 className="w-10 h-10" />
+          <div className="flex w-full max-w-lg flex-col items-center rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
+            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[var(--success-color)]/10 ring-8 ring-[var(--success-color)]/5">
+              <CheckCircle2 className="h-12 w-12 text-[var(--success-color)]" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-3 tracking-tight">Registration Successful!</h1>
-            <p className="text-[15px] text-muted-foreground mb-6 leading-relaxed">
+            <h1 className="mb-4 text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
+              Registration Successful!
+            </h1>
+            <p className="mx-auto mb-8 max-w-sm text-[15px] leading-relaxed text-[var(--text-secondary)]">
               Thank you for registering. You will receive a confirmation email shortly with further details about your interview.
             </p>
-            <div className="w-full p-4 bg-[var(--surface-2)] rounded-2xl border border-[var(--border-color-light)] dark:border-white/5">
-              <p className="text-[14px] font-medium text-foreground">
+            <div className="w-full rounded-2xl border border-[var(--header-floating-border)] bg-[var(--surface-2)] p-6 text-left">
+              <p className="flex items-center gap-2 text-[14px] font-medium text-[var(--text-primary)]">
+                <CheckCircle2 className="h-4 w-4 text-[var(--primary-color)]" />
                 Please check your email for interview instructions and preparation materials.
               </p>
             </div>
           </div>
         ) : (
-          <div className="w-full max-w-[540px] flex flex-col p-8 sm:p-10 rounded-[32px] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/5 shadow-2xl backdrop-blur-xl relative overflow-hidden">
-            
-            {/* Top Badge */}
-            <div className="inline-flex self-start px-3 py-1 rounded-full bg-[var(--primary-color)]/10 text-[var(--primary-color)] text-xs font-bold uppercase tracking-wider mb-6">
-              Interview Registration
+          <div className="relative flex w-full flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl">
+            <div className="border-b border-[var(--header-floating-border)] bg-transparent px-6 py-6 sm:px-8 sm:pb-6 sm:pt-8">
+              <div className="mb-3 inline-flex items-center rounded-md bg-[var(--primary-color)]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-[var(--primary-color)]">
+                Interview Registration
+              </div>
+              <h2 className="mb-1 text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
+                Your Information
+              </h2>
+              <p className="text-[14px] text-[var(--text-secondary)] sm:text-[15px]">
+                Please provide your details to schedule your interview.
+              </p>
             </div>
-            
-            <h2 className="text-3xl font-extrabold tracking-tight text-foreground mb-2">Your Information</h2>
-            <p className="text-[15px] text-muted-foreground mb-8">Please provide your details to schedule your interview</p>
 
-            {interviewDeadline && (
-              <div className="flex items-center gap-3 p-4 mb-8 rounded-2xl bg-[var(--warning-color)]/10 border border-[var(--warning-color)]/20 text-[var(--warning-color)]">
-                <Clock className="w-5 h-5 shrink-0" />
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-wider opacity-80">Interview Deadline</span>
-                  <span className="text-sm font-semibold">{format(new Date(interviewDeadline), "MMM d, yyyy 'at' h:mm a")}</span>
+            <div className="bg-transparent p-6 sm:p-8">
+              {interviewDeadline && (
+                <div className="mb-8 flex items-center gap-4 rounded-2xl border border-[var(--warning-color)]/20 bg-[var(--warning-color)]/10 p-4 text-[var(--warning-color)] sm:p-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--warning-color)]/20">
+                    <Clock className="h-5 w-5 text-[var(--warning-color)]" />
+                  </div>
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[11px] font-bold uppercase tracking-wider opacity-80">Interview Deadline</span>
+                    <span className="text-[15px] font-bold">
+                      {format(new Date(interviewDeadline), "MMM d, yyyy 'at' h:mm a")}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="flex flex-col gap-2">
+                    <Label className="text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                      First Name <span className="text-[var(--error-color)]">*</span>
+                    </Label>
+                    <Input
+                      value={formData.firstName}
+                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      placeholder="e.g. Emily"
+                      className={cn(
+                        "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
+                        errors.firstName && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                      )}
+                    />
+                    {errors.firstName && (
+                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.firstName}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <Label className="text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                      Last Name <span className="text-[var(--error-color)]">*</span>
+                    </Label>
+                    <Input
+                      value={formData.lastName}
+                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      placeholder="e.g. Chen"
+                      className={cn(
+                        "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
+                        errors.lastName && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                      )}
+                    />
+                    {errors.lastName && (
+                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.lastName}</span>
+                    )}
+                  </div>
+                </div>
+
                 <div className="flex flex-col gap-2">
-                  <Label className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">First Name</Label>
-                  <Input 
-                    value={formData.firstName}
-                    onChange={e => setFormData({...formData, firstName: e.target.value})}
-                    placeholder="First Name..."
-                    className={cn("h-12 rounded-xl bg-[var(--surface-2)] border-[var(--border-color-light)] dark:border-white/5 px-4 text-[15px] focus-visible:ring-[var(--primary-color)]", errors.firstName && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]")}
-                  />
-                  {errors.firstName && <span className="text-xs font-medium text-[var(--error-color)]">{errors.firstName}</span>}
-                </div>
-                
-                <div className="flex flex-col gap-2">
-                  <Label className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">Last Name</Label>
-                  <Input 
-                    value={formData.lastName}
-                    onChange={e => setFormData({...formData, lastName: e.target.value})}
-                    placeholder="Last Name..."
-                    className={cn("h-12 rounded-xl bg-[var(--surface-2)] border-[var(--border-color-light)] dark:border-white/5 px-4 text-[15px] focus-visible:ring-[var(--primary-color)]", errors.lastName && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]")}
-                  />
-                  {errors.lastName && <span className="text-xs font-medium text-[var(--error-color)]">{errors.lastName}</span>}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Label className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">Email</Label>
-                <Input 
-                  type="email"
-                  value={formData.email}
-                  onChange={e => setFormData({...formData, email: e.target.value})}
-                  placeholder="Email..."
-                  className={cn("h-12 rounded-xl bg-[var(--surface-2)] border-[var(--border-color-light)] dark:border-white/5 px-4 text-[15px] focus-visible:ring-[var(--primary-color)]", errors.email && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]")}
-                />
-                {errors.email && <span className="text-xs font-medium text-[var(--error-color)]">{errors.email}</span>}
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Label className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">Phone Number</Label>
-                <Input 
-                  type="tel"
-                  value={formData.phone}
-                  onChange={e => setFormData({...formData, phone: e.target.value})}
-                  placeholder="Phone Number..."
-                  className={cn("h-12 rounded-xl bg-[var(--surface-2)] border-[var(--border-color-light)] dark:border-white/5 px-4 text-[15px] focus-visible:ring-[var(--primary-color)]", errors.phone && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]")}
-                />
-                {errors.phone && <span className="text-xs font-medium text-[var(--error-color)]">{errors.phone}</span>}
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <Label className="text-[13px] font-semibold text-muted-foreground uppercase tracking-wider">Preferred Interview Date & Time</Label>
-                <Input 
-                  type="datetime-local"
-                  value={formData.preferredDateTime}
-                  onChange={e => setFormData({...formData, preferredDateTime: e.target.value})}
-                  className={cn("h-12 rounded-xl bg-[var(--surface-2)] border-[var(--border-color-light)] dark:border-white/5 px-4 text-[15px] focus-visible:ring-[var(--primary-color)]", errors.preferredDateTime && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]")}
-                />
-                {errors.preferredDateTime && <span className="text-xs font-medium text-[var(--error-color)]">{errors.preferredDateTime}</span>}
-              </div>
-
-              <div className="flex items-start gap-3 mt-2 p-4 rounded-xl bg-[var(--surface-2)] border border-[var(--border-color-light)] dark:border-white/5">
-                <Checkbox 
-                  id="consent"
-                  checked={formData.consent}
-                  onCheckedChange={(checked) => setFormData({...formData, consent: !!checked})}
-                  className={cn("mt-0.5 h-5 w-5 rounded-[4px] data-[state=checked]:bg-[var(--primary-color)] data-[state=checked]:border-[var(--primary-color)]", errors.consent && "border-[var(--error-color)]")}
-                />
-                <div className="flex flex-col gap-1">
-                  <Label htmlFor="consent" className="text-[14px] leading-relaxed text-foreground cursor-pointer font-medium">
-                    I consent to participate in this interview and understand that my information will be used for recruitment purposes only.
+                  <Label className="text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                    Email Address <span className="text-[var(--error-color)]">*</span>
                   </Label>
-                  {errors.consent && <span className="text-xs font-medium text-[var(--error-color)]">{errors.consent}</span>}
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="emily@example.com"
+                    className={cn(
+                      "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
+                      errors.email && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                    )}
+                  />
+                  {errors.email && (
+                    <span className="text-xs font-medium text-[var(--error-color)]">{errors.email}</span>
+                  )}
                 </div>
-              </div>
 
-              <Button 
-                type="submit"
-                disabled={submitMutation.isPending}
-                className="w-full h-14 mt-4 rounded-xl bg-gradient-to-r from-[var(--primary-color)] to-[var(--primary-color-hover)] text-white text-[16px] font-bold shadow-[0_4px_14px_rgba(var(--primary-color-rgb),0.3)] hover:opacity-90 transition-opacity"
-              >
-                {submitMutation.isPending ? "Registering..." : "Register for Interview"}
-              </Button>
-            </form>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                    Phone Number <span className="text-[var(--error-color)]">*</span>
+                  </Label>
+                  <Input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="555 123 4567"
+                    className={cn(
+                      "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
+                      errors.phone && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                    )}
+                  />
+                  {errors.phone && (
+                    <span className="text-xs font-medium text-[var(--error-color)]">{errors.phone}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label className="text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)]">
+                    Preferred Interview Date & Time <span className="text-[var(--error-color)]">*</span>
+                  </Label>
+                  <Input
+                    type="datetime-local"
+                    min={nowLocal}
+                    max={deadlineLocalMax}
+                    value={formData.preferredDateTime}
+                    onChange={(e) => setFormData({ ...formData, preferredDateTime: e.target.value })}
+                    className={cn(
+                      "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
+                      errors.preferredDateTime &&
+                        "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                    )}
+                  />
+                  {errors.preferredDateTime && (
+                    <span className="text-xs font-medium text-[var(--error-color)]">{errors.preferredDateTime}</span>
+                  )}
+                </div>
+
+                <div className="mt-2 flex items-start gap-4 rounded-2xl border border-[var(--header-floating-border)] bg-background p-5 shadow-sm">
+                  <Checkbox
+                    id="consent"
+                    checked={formData.consent}
+                    onCheckedChange={(checked) => setFormData({ ...formData, consent: !!checked })}
+                    className={cn(
+                      "mt-0.5 h-5 w-5 shrink-0 rounded-md data-[state=checked]:border-[var(--primary-color)] data-[state=checked]:bg-[var(--primary-color)]",
+                      errors.consent && "border-[var(--error-color)]"
+                    )}
+                  />
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="consent" className="cursor-pointer text-[14px] font-medium leading-relaxed text-[var(--text-primary)]">
+                      I consent to participate in this interview and understand that my information will be used for recruitment purposes only.
+                    </Label>
+                    {errors.consent && (
+                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.consent}</span>
+                    )}
+                  </div>
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={submitMutation.isPending}
+                  className="mt-4 h-14 w-full rounded-xl text-[16px] font-bold text-white shadow-md transition-all duration-200 bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] hover:shadow-[0_8px_20px_rgba(var(--primary-color-rgb),0.25)] hover:-translate-y-0.5 active:translate-y-0"
+                >
+                  {submitMutation.isPending ? "Saving…" : "Register for Interview"}
+                </Button>
+              </form>
+            </div>
           </div>
         )}
       </div>

@@ -171,6 +171,21 @@ export function parseApiError(error: unknown): string {
     return error instanceof Error ? error.message : "An unexpected error occurred.";
   }
 
+  const raw = error.response?.data as
+    | ApiEnvelope<unknown>
+    | { detail?: string | { message?: string } }
+    | undefined;
+
+  if (raw && typeof raw === "object" && "detail" in raw) {
+    const d = raw.detail;
+    if (typeof d === "string") {
+      return d;
+    }
+    if (d && typeof d === "object" && "message" in d && typeof (d as { message: string }).message === "string") {
+      return (d as { message: string }).message;
+    }
+  }
+
   const body = error.response?.data as ApiEnvelope<unknown> | undefined;
   if (body?.message) {
     return body.message;

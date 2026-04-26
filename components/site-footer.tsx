@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { PAGE_SHELL_CLASS } from "@/lib/site/page-layout";
+import { SITE_LOGO } from "@/lib/site/marketing-site";
 import { IconCheckCircle } from "./home/home-icons";
 
 const FOOTER_LINKS = {
@@ -31,7 +32,7 @@ export function SiteFooter() {
           <div className="lg:col-span-4">
             <div className="mb-5 flex items-center gap-2">
               <Image
-                src="https://storage.googleapis.com/images.reechout.com/android-chrome-192x192.webp"
+                src={SITE_LOGO}
                 alt=""
                 width={52}
                 height={52}

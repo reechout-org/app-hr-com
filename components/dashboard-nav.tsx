@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { LogOut, Moon, Plus, Sun, User as UserIcon } from "lucide-react";
 
 import { cn } from "@/lib/ui/cn";
+import { SITE_LOGO } from "@/lib/site/marketing-site";
 import { THEME_KEY } from "@/lib/ui/theme";
 import { useAuthStore } from "@/lib/store/auth.store";
 
@@ -82,7 +83,7 @@ export function DashboardNav({ onCreateNew }: DashboardNavProps) {
         {/* Left: Logo & Product Name */}
         <Link href="/interviews" className="flex min-w-0 shrink-0 items-center gap-2 sm:gap-2.5 no-underline outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-md">
           <Image
-            src="https://storage.googleapis.com/images.reechout.com/android-chrome-192x192.webp"
+            src={SITE_LOGO}
             alt="ReechOut Logo"
             width={40}
             height={40}
@@ -143,7 +144,7 @@ export function DashboardNav({ onCreateNew }: DashboardNavProps) {
             onClick={toggleTheme}
             aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-            className="rounded-full h-8 w-8 md:h-10 md:w-10 bg-transparent"
+            className="h-8 w-8 shrink-0 bg-transparent md:h-10 md:w-10"
           >
             {darkMode ? <Sun className="h-4 w-4 md:h-5 md:w-5" strokeWidth={2} /> : <Moon className="h-4 w-4 md:h-5 md:w-5" strokeWidth={2} />}
           </Button>
@@ -151,7 +152,7 @@ export function DashboardNav({ onCreateNew }: DashboardNavProps) {
           {/* Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="rounded-full h-8 w-8 md:h-10 md:w-10 bg-card">
+              <Button variant="outline" size="icon" className="h-8 w-8 shrink-0 bg-[var(--header-floating-bg)] md:h-10 md:w-10">
                 <UserIcon className="h-4 w-4 md:h-5 md:w-5" strokeWidth={2} />
               </Button>
             </DropdownMenuTrigger>

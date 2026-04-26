@@ -27,7 +27,7 @@ export function AuthPageRoot({ children }: { children: ReactNode }) {
  */
 export function AuthRightColumn({ children }: { children: ReactNode }) {
   return (
-    <div className="relative z-[1] flex min-h-screen min-h-0 w-full min-w-0 flex-[3] flex-col overflow-hidden bg-transparent pt-9 max-lg:pl-[clamp(1.25rem,5.5vw,2.5rem)] max-lg:pr-[6%] max-lg:pt-[4vh] max-md:px-[5%] max-md:pb-4 max-md:pl-[clamp(1rem,5vw,1.75rem)] max-md:pt-[5vh] lg:px-5 lg:pb-16 lg:pl-7 lg:pr-5">
+    <div className="relative z-[1] flex min-h-screen min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden bg-transparent pt-9 max-lg:pl-[clamp(1.25rem,5.5vw,2.5rem)] max-lg:pr-[6%] max-lg:pt-[4vh] max-md:px-[5%] max-md:pb-4 max-md:pl-[clamp(1rem,5vw,1.75rem)] max-md:pt-[5vh] lg:px-5 lg:pb-16 lg:pl-7 lg:pr-5">
       <div
         className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(rgba(0,0,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.03)_1px,transparent_1px),radial-gradient(ellipse_90%_70%_at_50%_-5%,rgba(var(--color-primary-rgb),0.12)_0%,rgba(var(--color-primary-rgb),0.04)_50%,transparent_70%)] bg-[length:64px_64px,64px_64px,100%_100%] dark:bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px),radial-gradient(ellipse_90%_70%_at_50%_-5%,rgba(var(--color-primary-rgb),0.14)_0%,rgba(var(--color-primary-rgb),0.05)_50%,transparent_70%)]"
         aria-hidden

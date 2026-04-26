@@ -44,7 +44,7 @@ import type { LoginPayload } from "@/lib/auth/types";
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null;
-  return <p className="mt-1.5 text-[13px] text-[var(--error-color)]">{message}</p>;
+  return <p className="mt-1.5 text-[14px] text-[var(--error-color)]">{message}</p>;
 }
 
 export default function LoginPage() {
@@ -52,8 +52,7 @@ export default function LoginPage() {
   const setSession = useAuthStore((s) => s.setSession);
   const [formError, setFormError] = useState<string | null>(null);
 
-  /** Same destination as Angular `login.component` after success (`interviews` → `/interview`). */
-  useRedirectIfAuthenticated("/interview");
+  useRedirectIfAuthenticated("/interviews");
 
   const {
     register,
@@ -76,8 +75,7 @@ export default function LoginPage() {
         first_name: "",
         last_name: "",
       });
-      /** Angular navigates to `interviews`; Next app uses `/interview`. */
-      router.replace("/interview");
+      router.replace("/interviews");
     },
     onError: (error) => {
       const fieldErrors = parseFieldErrors(error);

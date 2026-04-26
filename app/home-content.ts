@@ -1,4 +1,19 @@
 import type { SolutionHeroScreenshot } from "@/components/solution/solution-page-model";
+import { SITE_BASE_URL } from "@/lib/site/marketing-site";
+
+/** Canonical home URL and SEO text — must match [components/hero-section.tsx] h1 + first hero paragraph. */
+export const homeCanonical = `${SITE_BASE_URL}/`;
+
+export const HOME_SEO = {
+  title: "Resumes Don't Reflect Real Capability | ReechOut",
+  description:
+    "ReechOut is the AI-powered recruitment platform that conducts structured, conversational phone interviews. Eliminate bias, reduce time-to-hire, and make data-driven hiring decisions based on real candidate capabilities—not just polished resumes.",
+  keywords:
+    "ReechOut, AI phone interviews, recruitment platform, hiring automation, phone screening, structured interviews, HR tech, candidate evaluation",
+  author: "ReechOut",
+  robots: "index, follow",
+  language: "English",
+} as const;
 
 export type WhyChooseUiType =
   | "interview"

@@ -59,7 +59,7 @@ export function TranscriptModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[1000px] w-[95vw] h-[85vh] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[24px] dark:border-white/[0.09] flex flex-col">
+      <DialogContent className="max-w-[1000px] w-[95vw] h-[85vh] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09] flex flex-col">
         
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-6 py-4 dark:border-white/[0.09] shrink-0">
@@ -86,12 +86,9 @@ export function TranscriptModal({
         </div>
 
         {/* Chat Container */}
-        <div className="flex-1 overflow-y-auto p-6 bg-[var(--surface-1)]" data-lenis-prevent>
+        <div className="flex-1 overflow-y-auto p-6 bg-[var(--surface-1)]">
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--primary-color)] border-t-transparent" />
-              <p className="font-medium animate-pulse">Loading transcript...</p>
-            </div>
+            <div className="min-h-[200px] flex-1" aria-hidden />
           ) : isError || !report ? (
             <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground">
               <FileText className="h-10 w-10 opacity-50" />

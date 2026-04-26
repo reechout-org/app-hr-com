@@ -94,7 +94,7 @@ export function ScreeningReportModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[1200px] w-[95vw] h-[85vh] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[24px] dark:border-white/[0.09] flex flex-col">
+      <DialogContent className="max-w-[1200px] w-[95vw] h-[85vh] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09] flex flex-col">
         
         {/* Wrapper */}
         <div className="flex h-full w-full bg-[var(--background-color)] text-foreground">
@@ -120,7 +120,7 @@ export function ScreeningReportModal({
             </div>
 
             {/* Navigation */}
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar" data-lenis-prevent>
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
               {/* General */}
               <div className="mb-6">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-3 px-3">General</div>
@@ -168,16 +168,12 @@ export function ScreeningReportModal({
             className="flex-1 overflow-y-auto p-8 lg:p-12 relative bg-[var(--surface-2)] custom-scrollbar" 
             onScroll={handleScroll}
             ref={scrollRef}
-            data-lenis-prevent
           >
             {/* Ambient Background Glow matching Angular */}
             <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[var(--primary-color)] opacity-[0.03] rounded-full blur-[100px] pointer-events-none" />
 
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
-                <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--primary-color)] border-t-transparent" />
-                <p className="font-medium animate-pulse">Loading screening results...</p>
-              </div>
+              <div className="min-h-[50vh]" aria-hidden />
             ) : isError || !report ? (
               <div className="flex flex-col items-center justify-center h-full gap-3 text-muted-foreground">
                 <FileText className="h-12 w-12 opacity-50" />
@@ -193,15 +189,15 @@ export function ScreeningReportModal({
                     <p className="text-muted-foreground">Screening performance assessment.</p>
                   </div>
 
-                  <div className="p-8 rounded-[24px] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm">
+                  <div className="p-8 rounded-[var(--radius-md)] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm">
                     {/* Primary Score */}
                     <div className="flex items-center gap-6 p-6 rounded-[20px] bg-[var(--surface-2)] border border-[var(--border-color-light)] dark:border-white/5">
                       <div className={cn(
-                        "relative flex items-center justify-center w-16 h-16 rounded-2xl border",
+                        "relative flex items-center justify-center w-16 h-16 rounded-[var(--radius-md)] border",
                         isPassed ? "bg-[var(--success-color)]/10 border-[var(--success-color)]/20" : "bg-[var(--error-color)]/10 border-[var(--error-color)]/20"
                       )}>
                         <div className={cn(
-                          "absolute inset-0 blur-md rounded-2xl",
+                          "absolute inset-0 blur-md rounded-[var(--radius-md)]",
                           isPassed ? "bg-[var(--success-color)]/10" : "bg-[var(--error-color)]/10"
                         )} />
                         {isPassed ? (
@@ -228,7 +224,7 @@ export function ScreeningReportModal({
                       <p className="text-muted-foreground">AI-generated screening summary.</p>
                     </div>
 
-                    <div className="p-8 rounded-[24px] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm flex flex-col gap-6">
+                    <div className="p-8 rounded-[var(--radius-md)] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm flex flex-col gap-6">
                       <div className="p-6 rounded-[20px] bg-[var(--surface-2)] border border-[var(--border-color-light)] dark:border-white/5">
                         <div className="flex items-center gap-3 mb-4">
                           <FileText className="h-5 w-5 text-[var(--primary-color)]" />
@@ -250,7 +246,7 @@ export function ScreeningReportModal({
                       <p className="text-muted-foreground">Candidate responses to screening questions.</p>
                     </div>
 
-                    <div className="p-8 rounded-[24px] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm flex flex-col gap-6">
+                    <div className="p-8 rounded-[var(--radius-md)] bg-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/10 shadow-sm flex flex-col gap-6">
                       {Object.entries(report.screening_answers!).map(([id, qa], idx) => (
                         <div key={id} className="p-6 rounded-[20px] bg-[var(--surface-2)] border border-[var(--border-color-light)] dark:border-white/5 flex flex-col gap-5">
                           

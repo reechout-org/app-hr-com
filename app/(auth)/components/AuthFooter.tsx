@@ -3,7 +3,7 @@ export default function AuthFooter() {
 
   return (
     <div className="mt-8 text-center">
-      <span className="text-xs leading-4 text-[var(--text-muted)]">
+      <span className="text-[13px] leading-4 text-[var(--text-muted)]">
         © {currentYear} ReechOut
       </span>
     </div>

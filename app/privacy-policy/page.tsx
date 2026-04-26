@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     description: PRIVACY_POLICY_METADATA.description,
     type: "website",
     url: privacyPolicyCanonical,
+    siteName: "ReechOut",
     locale: "en_US",
     images: [{ url: MARKETING_OG_IMAGE }],
   },

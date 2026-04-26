@@ -70,6 +70,7 @@ export async function generateMetadata({
       description,
       type: "article",
       url,
+      siteName: "ReechOut",
       publishedTime: post.publishedAt,
       locale: "en_US",
       images: [{ url: ogImage }],

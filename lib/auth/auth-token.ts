@@ -42,3 +42,9 @@ export function clearAllTokens(): void {
   clearAccessToken();
   clearRefreshToken();
 }
+
+/** True if either JWT is in localStorage (client only). */
+export function hasClientSession(): boolean {
+  if (typeof window === "undefined") return false;
+  return !!(getAccessToken() || getRefreshToken());
+}

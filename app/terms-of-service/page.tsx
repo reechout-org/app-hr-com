@@ -28,6 +28,7 @@ export const metadata: Metadata = {
     description: TERMS_OF_SERVICE_METADATA.description,
     type: "website",
     url: termsOfServiceCanonical,
+    siteName: "ReechOut",
     locale: "en_US",
     images: [{ url: MARKETING_OG_IMAGE }],
   },

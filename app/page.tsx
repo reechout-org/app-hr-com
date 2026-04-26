@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import {
   HomeApplicationsSection,
   HomeCtaSection,
@@ -14,6 +15,37 @@ import {
 import { PageAmbientBackground } from "../components/page-ambient-background";
 import { SiteNav } from "../components/site-nav";
 import { SiteFooter } from "../components/site-footer";
+import { HOME_SEO, homeCanonical } from "@/app/home-content";
+import { MARKETING_OG_IMAGE } from "@/lib/site/marketing-site";
+
+export const metadata: Metadata = {
+  title: { absolute: HOME_SEO.title },
+  description: HOME_SEO.description,
+  keywords: HOME_SEO.keywords,
+  authors: [{ name: HOME_SEO.author }],
+  robots: HOME_SEO.robots,
+  alternates: {
+    canonical: homeCanonical,
+  },
+  openGraph: {
+    title: HOME_SEO.title,
+    description: HOME_SEO.description,
+    type: "website",
+    url: homeCanonical,
+    siteName: "ReechOut",
+    locale: "en_US",
+    images: [{ url: MARKETING_OG_IMAGE }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: HOME_SEO.title,
+    description: HOME_SEO.description,
+    images: [MARKETING_OG_IMAGE],
+  },
+  other: {
+    language: HOME_SEO.language,
+  },
+};
 
 export default function Home() {
   return (

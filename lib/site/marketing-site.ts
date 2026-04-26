@@ -10,6 +10,9 @@ export const REECHOUT_CONNECT_URL =
 export const MARKETING_OG_IMAGE =
   "https://storage.googleapis.com/images.reechout.com/android-chrome-192x192.webp";
 
+/** In-app logo (local WebP). Tab icon remains `app/favicon.ico`. */
+export const SITE_LOGO = "/android-chrome-192x192.webp";
+
 /** Trust row under solution-page heroes (matches homepage hero). */
 export const DEFAULT_SOLUTION_TRUST_ITEMS = [
   "SOC 2 Compliant",

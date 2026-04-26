@@ -61,10 +61,45 @@ export interface PaginatedQuestionnaireResponse {
   results: Questionnaire[];
 }
 
+/** Body for `POST /api/questionnaires/` — matches FastAPI `QuestionnaireCreate`. */
+export interface QuestionnaireCreateBody {
+  title?: string;
+  details: string;
+  job_role_title: string;
+  department: string;
+  seniority_level: string;
+  location: string;
+  work_environment: Record<string, unknown>;
+  competency_ratings: Array<{ id: string; name: string; importance_label: string }>;
+  team_culture_profile: Array<{ id: string; label: string; value_label: string }>;
+  success_patterns: string;
+  failure_patterns: string;
+  company_name?: string | null;
+  min_salary?: number | null;
+  max_salary?: number | null;
+  years_of_experience?: number | null;
+  number_of_questions: number;
+}
+
+export type QuestionnaireUpdatePayload = Partial<
+  Pick<
+    Questionnaire,
+    "title" | "details" | "instructions" | "first_message" | "number_of_questions"
+  >
+>;
+
 export const questionnairesApi = {
   getQuestionnaires: async (page = 1, pageSize = 10) => {
     const { data } = await apiClient.get<PaginatedQuestionnaireResponse>(
       `/api/questionnaires/?page=${page}&page_size=${pageSize}`
+    );
+    return data;
+  },
+
+  createQuestionnaire: async (body: QuestionnaireCreateBody) => {
+    const { data } = await apiClient.post<Record<string, unknown>>(
+      `/api/questionnaires/`,
+      body
     );
     return data;
   },
@@ -76,7 +111,7 @@ export const questionnairesApi = {
     return data;
   },
 
-  updateQuestionnaire: async (id: string, payload: Partial<Questionnaire>) => {
+  updateQuestionnaire: async (id: string, payload: QuestionnaireUpdatePayload) => {
     const { data } = await apiClient.put<Questionnaire>(
       `/api/questionnaires/${id}/`,
       payload

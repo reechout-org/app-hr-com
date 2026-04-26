@@ -57,7 +57,7 @@ function FilterDropdown({
 }) {
   return (
     <Select value={value || "all"} onValueChange={(val) => onChange(val === "all" ? "" : val)}>
-      <SelectTrigger className="h-10 min-w-[140px] rounded-xl bg-background shadow-sm border-border focus:ring-primary">
+      <SelectTrigger className="h-10 min-w-[140px] rounded-xl border border-[var(--header-floating-border)] bg-background shadow-sm focus:ring-primary">
         <SelectValue placeholder={label} />
       </SelectTrigger>
       <SelectContent>
@@ -95,7 +95,7 @@ function InterviewsDashboard() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   
-  const targetClasses = 'rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_4px_24px_rgba(var(--shadow-rgb),0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[rgba(var(--primary-color-rgb),0.28)] hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] dark:border-white/[0.09] dark:hover:border-[rgba(var(--accent-violet-rgb),0.35)]';
+  const targetClasses = 'rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09),0_1px_4px_rgba(var(--shadow-rgb),0.05)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[rgba(var(--primary-color-rgb),0.28)] hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] dark:hover:border-[rgba(var(--accent-violet-rgb),0.35)]';
   const pillClasses = "inline-flex items-center gap-2 rounded-xl border border-[rgba(var(--primary-color-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--primary-color-rgb),0.08)] to-[rgba(var(--primary-color-rgb),0.04)] px-3.5 py-2 backdrop-blur-md transition-all duration-200 hover:-translate-y-[1px] hover:border-[rgba(var(--primary-color-rgb),0.25)] hover:from-[rgba(var(--primary-color-rgb),0.12)] hover:to-[rgba(var(--primary-color-rgb),0.06)] hover:shadow-[0_4px_12px_rgba(var(--primary-color-rgb),0.15)]";
 
   const { data, isLoading } = useQuery({
@@ -169,11 +169,11 @@ function InterviewsDashboard() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] pt-4 pb-8 sm:pt-6">
+    <div className="mx-auto w-full max-w-[1400px] pt-2 pb-2 sm:pt-3 sm:pb-3">
       {/* Background Decorative Gradient */}
       <div className="fixed inset-0 -z-10 bg-[var(--background-color)] bg-[radial-gradient(ellipse_at_top_right,rgba(var(--primary-color-rgb),0.05),transparent_60%)]" />
 
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between relative z-20">
+      <div className="mb-3 flex flex-col gap-3 sm:mb-4 sm:flex-row sm:items-center sm:justify-between relative z-20">
         <div className={cn("flex w-full min-h-[52px] flex-col gap-4 rounded-[var(--radius-md)] py-3 px-[clamp(0.875rem,2.5vw,1.125rem)] sm:px-[clamp(1.125rem,3.5vw,1.5rem)] lg:px-[clamp(1.25rem,4vw,2rem)] md:flex-row md:items-center md:justify-between", targetClasses)}>
           
           {/* Filters */}
@@ -209,7 +209,7 @@ function InterviewsDashboard() {
                 placeholder="Search interviews..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 w-full rounded-xl pl-9 bg-background border-border focus-visible:ring-primary placeholder:text-muted-foreground shadow-sm"
+                className="h-10 w-full rounded-xl border border-[var(--header-floating-border)] pl-9 bg-background focus-visible:ring-primary placeholder:text-muted-foreground shadow-sm"
               />
             </div>
 
@@ -218,7 +218,7 @@ function InterviewsDashboard() {
               type="single" 
               value={viewMode} 
               onValueChange={(val) => val && setViewMode(val as ViewMode)} 
-              className="h-10 items-center rounded-xl border border-border bg-card p-1 shadow-sm gap-0"
+              className="h-10 items-center gap-0 rounded-xl border border-[var(--header-floating-border)] bg-background p-1 shadow-sm"
             >
               <ToggleGroupItem 
                 value="grid" 
@@ -241,7 +241,7 @@ function InterviewsDashboard() {
 
       <div className={cn(isLoading && "opacity-60 pointer-events-none")}>
         {!isLoading && filteredInterviews.length === 0 ? (
-          <div className="my-12 flex flex-col items-center justify-center text-center">
+          <div className="my-8 flex flex-col items-center justify-center text-center">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-[var(--surface-2)] text-[var(--text-muted)]">
               <Search className="h-8 w-8" />
             </div>
@@ -256,7 +256,7 @@ function InterviewsDashboard() {
             {viewMode === "list" && (
               <div className={cn("rounded-[var(--radius-md)] relative z-10", targetClasses)}>
                 {/* Desktop Header */}
-                <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_1.2fr_80px] border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] md:grid dark:border-white/[0.09] dark:bg-[rgba(12,10,20,0.98)] rounded-t-[calc(var(--radius-md)-1px)]">
+                <div className="hidden grid-cols-[2fr_1fr_1fr_1fr_1.2fr_80px] rounded-t-[calc(var(--radius-md)-1px)] border-b border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] px-6 py-4 text-[13px] font-semibold uppercase tracking-wider text-[var(--text-secondary)] md:grid">
                   <div className="px-2">Questionnaire</div>
                   <div className="px-2">Created By</div>
                   <div className="px-2">Status</div>
@@ -266,7 +266,7 @@ function InterviewsDashboard() {
                 </div>
                 
                 {/* List Items */}
-                <div className="flex flex-col divide-y divide-[var(--border-color-light)]">
+                <div className="flex flex-col divide-y divide-[var(--header-floating-border)]">
                   {(isLoading ? Array(5).fill(null) : filteredInterviews).map((item: InterviewListItem | null, i) => (
                     <div
                       key={item?.id || i}
@@ -501,7 +501,7 @@ function InterviewsDashboard() {
 
         {/* Pagination */}
         {!isLoading && data?.count ? (
-          <div className="mt-8 flex flex-col items-center justify-between gap-4 pt-2 sm:flex-row pb-8">
+          <div className="mt-3 flex flex-col items-center justify-between gap-3 sm:mt-4 sm:flex-row">
             <div className="flex items-center gap-4 text-sm text-[var(--text-secondary)]">
               <span>
                 Showing{" "}
@@ -525,7 +525,7 @@ function InterviewsDashboard() {
                     setPageSize(Number(e.target.value));
                     setPage(1); // Reset to page 1 on size change
                   }}
-                  className="h-8 rounded-xl border border-[var(--border-color-light)] bg-[var(--background-color)] px-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--primary-color)] focus:ring-1 focus:ring-[var(--primary-color)]"
+                  className="h-8 rounded-xl border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] px-2 text-sm text-[var(--text-secondary)] outline-none focus:border-[var(--primary-color)] focus:ring-1 focus:ring-[var(--primary-color)]"
                 >
                   <option value={10}>10 / page</option>
                   <option value={20}>20 / page</option>
@@ -538,7 +538,7 @@ function InterviewsDashboard() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="flex h-9 items-center justify-center gap-1 rounded-xl border border-[var(--border-color-light)] bg-[var(--surface-1)] px-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-50"
+                className="flex h-9 items-center justify-center gap-1 rounded-xl border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] px-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-50"
               >
                 <ChevronLeft className="h-4 w-4" />
                 Previous
@@ -546,7 +546,7 @@ function InterviewsDashboard() {
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= Math.ceil(data.count / pageSize)}
-                className="flex h-9 items-center justify-center gap-1 rounded-xl border border-[var(--border-color-light)] bg-[var(--surface-1)] px-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-50"
+                className="flex h-9 items-center justify-center gap-1 rounded-xl border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] px-3 text-sm font-medium text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)] disabled:pointer-events-none disabled:opacity-50"
               >
                 Next
                 <ChevronRight className="h-4 w-4" />
@@ -556,7 +556,6 @@ function InterviewsDashboard() {
         ) : null}
       </div>
 
-      {/* Renders only on mobile */}
       <FloatingBtn text="New Interview" onClick={handleCreateNew} />
 
       <DeleteInterviewModal
@@ -572,11 +571,7 @@ function InterviewsDashboard() {
 
 export default function InterviewsPage() {
   return (
-    <Suspense fallback={
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--primary-color)] border-t-transparent" />
-      </div>
-    }>
+    <Suspense fallback={null}>
       <InterviewsDashboard />
     </Suspense>
   );

@@ -7,9 +7,23 @@ import { Mic, PhoneOff, AlertCircle } from "lucide-react";
 import Vapi from "@vapi-ai/web";
 import { toast } from "sonner";
 
-import { Orb, type AgentState } from "./components/orb";
+import { Orb as NewOrb } from "@/components/ui/orb";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/ui/cn";
+
+export type AgentState = "speaking" | "listening" | "thinking" | "connecting" | "idle" | null;
+
+// Map our internal agent state to the NewOrb component's expected states
+function mapOrbState(state: AgentState): "talking" | "listening" | "thinking" | null {
+  switch (state) {
+    case "speaking": return "talking";
+    case "listening": return "listening";
+    case "thinking":
+    case "connecting": return "thinking";
+    case "idle":
+    default: return null;
+  }
+}
 
 // In the Angular version, the API returns these fields specifically for the agent flow
 interface AssistantData {
@@ -198,11 +212,7 @@ export default function WebVoiceAgentPage({ params }: AgentPageProps) {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--background-color)]">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--primary-color)] border-t-transparent" />
-      </div>
-    );
+    return null;
   }
 
   if (isError || !data) {
@@ -249,11 +259,11 @@ export default function WebVoiceAgentPage({ params }: AgentPageProps) {
             
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--surface-2)] to-[var(--surface-1)] border border-[var(--border-color-light)] dark:border-white/5 shadow-inner opacity-20" />
             
-            {/* Custom 3D Glowing Orb */}
+            {/* New 3D Glowing Orb */}
             <div className="w-[85%] h-[85%] relative z-10">
-              <Orb 
-                state={orbAgentState} 
-                colors={["var(--primary-color)", "#a76abc"]} 
+              <NewOrb 
+                agentState={mapOrbState(orbAgentState)} 
+                colors={["#611f69", "#a76abc"]} 
               />
             </div>
           </div>
@@ -283,7 +293,6 @@ export default function WebVoiceAgentPage({ params }: AgentPageProps) {
               >
                 {isConnecting ? (
                   <div className="flex items-center gap-3">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     {buttonText}
                   </div>
                 ) : isConnected ? (

@@ -59,7 +59,7 @@ export default function AuthLeftPanel() {
   return (
     <div
       ref={panelRef}
-      className="group relative hidden h-screen min-h-0 flex-[2] flex-col overflow-hidden bg-[var(--bg-base)] lg:flex"
+      className="group relative hidden h-screen min-h-0 flex-1 flex-col overflow-hidden bg-[var(--bg-base)] lg:flex"
       onMouseMove={handleMouseMove}
     >
       <div
@@ -123,13 +123,13 @@ export default function AuthLeftPanel() {
             not resume noise
           </motion.h1>
 
-          <motion.p variants={itemVariants} className="mb-[clamp(18px,3vh,28px)] text-center text-[13px] leading-normal text-[var(--text-muted)]">
+          <motion.p variants={itemVariants} className="mb-[clamp(18px,3vh,28px)] text-center text-[15px] leading-normal text-[var(--text-muted)]">
             <span className="relative font-extrabold text-[var(--primary)]">ReechOut</span> is
             the structured interview and reporting layer that turns conversations into hiring
             signal—so your team focuses on decisions, not noise.
           </motion.p>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {FEATURES.map((f, i) => {
               const Icon = f.icon;
               return (
@@ -138,16 +138,16 @@ export default function AuthLeftPanel() {
                   variants={itemVariants}
                   whileHover={{ x: 4, scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
-                  className="flex cursor-default items-start gap-2.5 rounded-xl border border-[color-mix(in_srgb,var(--foreground)_6%,transparent)] bg-[color-mix(in_srgb,var(--bg-card)_40%,transparent)] px-3 py-2.5 backdrop-blur-[12px] transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] hover:bg-[color-mix(in_srgb,var(--bg-card)_90%,transparent)] hover:shadow-[0_8px_20px_-10px_color-mix(in_srgb,var(--primary)_15%,transparent)]"
+                  className="flex cursor-default items-start gap-3 rounded-xl border border-[color-mix(in_srgb,var(--foreground)_6%,transparent)] bg-[color-mix(in_srgb,var(--bg-card)_40%,transparent)] px-4 py-3.5 backdrop-blur-[12px] transition-colors duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-[color-mix(in_srgb,var(--primary)_30%,transparent)] hover:bg-[color-mix(in_srgb,var(--bg-card)_90%,transparent)] hover:shadow-[0_8px_20px_-10px_color-mix(in_srgb,var(--primary)_15%,transparent)]"
                 >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary)_15%,transparent)] text-[var(--primary)] transition-transform duration-300 group-hover:scale-110">
-                    <Icon className="h-4 w-4" aria-hidden />
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary)_15%,transparent)] text-[var(--primary)] transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="h-5 w-5" aria-hidden />
                   </div>
                   <div className="flex flex-col gap-1 pt-0.5">
-                    <span className="text-xs font-bold tracking-tight text-[var(--text-heading)]">
+                    <span className="text-[14px] font-bold tracking-tight text-[var(--text-heading)]">
                       {f.title}
                     </span>
-                    <span className="text-xs leading-snug text-[var(--text-muted)]">{f.desc}</span>
+                    <span className="text-[13px] leading-snug text-[var(--text-muted)]">{f.desc}</span>
                   </div>
                 </motion.div>
               );
@@ -162,7 +162,7 @@ export default function AuthLeftPanel() {
         transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
         className="relative z-10 px-6 pb-9 pt-0 text-center"
       >
-        <div className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] px-3 py-1.5 text-[11px] font-bold text-[var(--primary)] backdrop-blur-[8px] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--primary)_18%,transparent)]">
+        <div className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--primary)_20%,transparent)] bg-[color-mix(in_srgb,var(--primary)_12%,transparent)] px-3.5 py-1.5 text-[13px] font-bold text-[var(--primary)] backdrop-blur-[8px] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[color-mix(in_srgb,var(--primary)_18%,transparent)]">
           Structured hiring intelligence
         </div>
       </motion.div>

@@ -16,6 +16,7 @@ import {
 import { cn } from "@/lib/ui/cn";
 import { questionnairesApi, Question } from "@/lib/api/questionnaires";
 import { questionsApi } from "@/lib/api/questions";
+import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,7 +47,7 @@ import { QuestionModal } from "./components/question-modal";
 import { DeleteQuestionModal } from "./components/delete-question-modal";
 import { RegenerateQuestionsModal } from "./components/regenerate-questions-modal";
 
-const glassyCardClasses = "border border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_4px_24px_rgba(var(--shadow-rgb),0.04)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[rgba(var(--primary-color-rgb),0.28)] hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] dark:border-white/[0.09] dark:hover:border-[rgba(var(--accent-violet-rgb),0.35)]";
+const glassyCardClasses = "rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09)] transition-[border-color,box-shadow,transform] duration-300 hover:border-[rgba(var(--primary-color-rgb),0.28)] hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] dark:hover:border-[rgba(var(--accent-violet-rgb),0.35)]";
 
 const DEFAULT_INTRO_MESSAGE =
   "Hi {{ candidate_name }}, this is Sarah calling from {{ company_name }} for initial screening for the {{ interview_title }} position. How are you doing today?";
@@ -89,7 +90,7 @@ function SortableQuestionItem({
       case "screening":
         return "bg-orange-500/10 text-orange-600 border-orange-500/20";
       default:
-        return "bg-muted text-muted-foreground border-border";
+        return "bg-muted text-[var(--text-secondary)] border-[var(--header-floating-border)]";
     }
   };
 
@@ -103,9 +104,9 @@ function SortableQuestionItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex flex-col gap-3 rounded-[var(--radius-md)] p-5 transition-all group",
+        "flex flex-col gap-3 p-5 transition-all group",
         glassyCardClasses,
-        isDragging ? "border-[var(--primary-color)] opacity-80 shadow-lg scale-[1.02] z-50" : "hover:-translate-y-0.5 hover:shadow-md hover:border-[var(--primary-color-rgb)]/30"
+        isDragging ? "border-[var(--primary-color)] opacity-80 shadow-lg scale-[1.02] z-50 bg-background" : "bg-background"
       )}
     >
       <div className="flex items-center justify-between">
@@ -113,28 +114,28 @@ function SortableQuestionItem({
           <div
             {...attributes}
             {...listeners}
-            className="flex h-8 w-8 cursor-grab items-center justify-center rounded-lg hover:bg-muted active:cursor-grabbing"
+            className="flex h-8 w-8 cursor-grab items-center justify-center rounded-lg hover:bg-[var(--surface-2)] active:cursor-grabbing"
           >
-            <GripVertical className="h-4 w-4 text-muted-foreground" />
+            <GripVertical className="h-4 w-4 text-[var(--text-muted)]" />
           </div>
-          <span className="font-semibold text-foreground">Q{index + 1}</span>
+          <span className="font-semibold text-[var(--text-primary)]">Q{index + 1}</span>
           {question.question_type && (
             <Badge variant="outline" className={cn("px-2 py-0.5", getQuestionTypeColor(question.question_type))}>
               {getQuestionTypeLabel(question.question_type)}
             </Badge>
           )}
         </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--primary-color)] hover:text-[var(--primary-hover)] hover:bg-[var(--primary-color)]/10" onClick={() => onEdit(question)}>
+        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 transition-opacity group-hover:opacity-100">
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10" onClick={() => onEdit(question)}>
             <Edit className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(question)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--text-secondary)] hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(question)}>
             <Trash className="h-4 w-4" />
           </Button>
         </div>
       </div>
       <div className="pl-11">
-        <p className="text-sm leading-relaxed text-foreground">
+        <p className="text-sm leading-relaxed text-[var(--text-primary)]">
           {question.question_text || "Question text not available"}
         </p>
       </div>
@@ -194,7 +195,11 @@ export default function QuestionnaireDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questionnaire", id] });
       setIsIntroModalOpen(false);
-    }
+      toast.success("Intro message template updated");
+    },
+    onError: () => {
+      toast.error("Failed to update intro message");
+    },
   });
 
   const regenerateMutation = useMutation({
@@ -206,7 +211,11 @@ export default function QuestionnaireDetailPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["questionnaire", id] });
       setIsRegenerateModalOpen(false);
-    }
+      toast.success("Regeneration started");
+    },
+    onError: () => {
+      toast.error("Failed to regenerate questions");
+    },
   });
 
   const createQuestionMutation = useMutation({
@@ -325,55 +334,54 @@ export default function QuestionnaireDetailPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <main className="mx-auto w-full max-w-[1400px] flex-1 px-4 py-6 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-[1400px] flex-1 p-[clamp(1rem,3vw,2rem)]">
         
         {/* Header */}
         <div className="mb-8 flex flex-col gap-4">
           <div>
-            <Button variant="default" onClick={() => router.push("/questionnaires")} className="inline-flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--primary-color)] bg-[var(--surface-2)] text-[var(--text-primary)] hover:bg-[var(--primary-color)]/10 hover:text-[var(--primary-color)] transition-colors h-9 px-4">
+            <Button variant="outline" onClick={() => router.push("/questionnaires")} className="inline-flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-background text-[var(--text-secondary)] hover:bg-[var(--surface-2)] hover:text-[var(--text-primary)] transition-colors h-8 px-3">
               <ArrowLeft className="h-4 w-4" />
               <span>Back to Questionnaires</span>
             </Button>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground truncate max-w-2xl">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--text-primary)] truncate max-w-2xl">
             {data.questionnaire_title}
           </h1>
         </div>
 
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-8 lg:gap-10">
           
           {/* Persona Section */}
           {data.persona && (
             <section>
-
               <div 
-                className={cn("group cursor-pointer overflow-hidden rounded-[var(--radius-md)] transition-all hover:shadow-md hover:-translate-y-0.5 hover:border-[var(--primary-color-rgb)]/30", glassyCardClasses)}
+                className={cn("group cursor-pointer overflow-hidden transition-all", glassyCardClasses)}
                 onClick={() => setIsPersonaModalOpen(true)}
               >
-                <div className="flex items-center justify-between border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-5 py-4 dark:border-white/[0.09] dark:bg-[rgba(12,10,20,0.98)]">
+                <div className="flex items-center justify-between border-b border-[var(--header-floating-border)] bg-transparent px-5 py-4 sm:px-6">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--primary-color)]/10 text-[var(--primary-color)]">
                       <User className="h-5 w-5" />
                     </div>
-                    <span className="font-semibold text-foreground">
+                    <span className="font-semibold text-[var(--text-primary)]">
                       {data.questionnaire_title} (Ideal Candidate Persona)
                     </span>
                   </div>
-                  <Button variant="outline" className="hidden sm:flex rounded-xl font-medium bg-[var(--background-color)] border border-[var(--border-color-light)] hover:bg-[var(--surface-2)] transition-colors dark:border-white/[0.09]">
+                  <Button variant="outline" className="hidden sm:flex rounded-xl font-medium bg-background border-[var(--header-floating-border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-2)] transition-colors h-9 px-4 shadow-sm">
                     View Full Details
                   </Button>
                 </div>
-                <div className="p-5">
+                <div className="p-5 sm:p-6 bg-background">
                   {candidateAttributes.length > 0 && (
                     <div className="mb-4 flex flex-wrap gap-2">
                       {candidateAttributes.map((attr, idx) => (
-                        <Badge key={idx} className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 font-medium">
+                        <Badge key={idx} className="bg-blue-500/10 text-blue-600 hover:bg-blue-500/20 font-medium rounded-lg">
                           {attr}
                         </Badge>
                       ))}
                     </div>
                   )}
-                  <p className="text-sm leading-relaxed text-muted-foreground line-clamp-3">
+                  <p className="text-sm leading-relaxed text-[var(--text-secondary)] line-clamp-3">
                     {data.persona.persona_summary}
                   </p>
                 </div>
@@ -383,60 +391,59 @@ export default function QuestionnaireDetailPage() {
 
           {/* Intro Message Section */}
           <section>
-
             <div 
-              className={cn("group cursor-pointer overflow-hidden rounded-[var(--radius-md)] transition-all hover:shadow-md hover:-translate-y-0.5 hover:border-[var(--primary-color-rgb)]/30", glassyCardClasses)}
+              className={cn("group cursor-pointer overflow-hidden transition-all", glassyCardClasses)}
               onClick={() => setIsIntroModalOpen(true)}
             >
-              <div className="flex items-center justify-between border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-5 py-4 dark:border-white/[0.09] dark:bg-[rgba(12,10,20,0.98)]">
+              <div className="flex items-center justify-between border-b border-[var(--header-floating-border)] bg-transparent px-5 py-4 sm:px-6">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--primary-color)]/10 text-[var(--primary-color)]">
                     <MessageSquare className="h-5 w-5" />
                   </div>
-                  <span className="font-semibold text-foreground">
+                  <span className="font-semibold text-[var(--text-primary)]">
                     Intro Message Template
                   </span>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground group-hover:text-primary">
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-[var(--text-secondary)] hover:text-[var(--primary-color)] hover:bg-[var(--primary-color)]/10 opacity-100 sm:opacity-0 transition-opacity group-hover:opacity-100">
                   <Edit className="h-4 w-4" />
                 </Button>
               </div>
-              <div className="p-5">
-                <p className="text-[15px] font-medium leading-relaxed text-foreground">
+              <div className="p-5 sm:p-6 bg-background">
+                <p className="text-[15px] font-medium leading-relaxed text-[var(--text-primary)]">
                   {introMessage}
                 </p>
                 {exampleMessage && (
-                  <div className="mt-4 rounded-xl border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1.5">Example Preview</p>
-                    <p className="text-sm italic text-muted-foreground">&quot;{exampleMessage}&quot;</p>
+                  <div className="mt-5 rounded-xl border border-[var(--header-floating-border)] bg-[var(--surface-2)] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)] mb-1.5">Example Preview</p>
+                    <p className="text-sm italic text-[var(--text-secondary)]">&quot;{exampleMessage}&quot;</p>
                   </div>
                 )}
               </div>
             </div>
           </section>
 
-          <hr className="border-border" />
+          <hr className="border-[var(--header-floating-border)]" />
 
           {/* Questions Section */}
           <section>
-            <div className={cn("mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 rounded-[var(--radius-md)]", glassyCardClasses)}>
+            <div className={cn("mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 transition-all", glassyCardClasses)}>
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--primary-color)]/10 text-[var(--primary-color)]">
                   <MessageSquare className="h-6 w-6" />
                 </div>
                 <div>
-
-                  <p className="text-sm font-medium text-muted-foreground mt-1">
+                  <h2 className="text-lg font-semibold text-[var(--text-primary)]">Questions List</h2>
+                  <p className="text-sm font-medium text-[var(--text-secondary)] mt-0.5">
                     {localScreeningQuestions.length + localRegularQuestions.length} total questions
                   </p>
                 </div>
               </div>
               <Button 
                 onClick={() => setIsRegenerateModalOpen(true)} 
-                className="rounded-xl sm:w-auto w-full h-10 font-semibold bg-gradient-to-br from-[var(--primary-color)] to-[var(--primary-hover)] text-white shadow-md hover:brightness-110 border-0"
+                className="h-10 rounded-xl px-6 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] hover:shadow-[0_4px_14px_rgba(var(--primary-color-rgb),0.25)] hover:-translate-y-0.5 active:translate-y-0 text-white shadow-sm transition-all duration-200"
               >
                 <RefreshCw className="mr-2 h-4 w-4" />
-                Regenerate
+                Regenerate All
               </Button>
             </div>
 
@@ -446,16 +453,16 @@ export default function QuestionnaireDetailPage() {
               className="w-full"
             >
               <div className="mb-10 flex w-full justify-center">
-                <TabsList className="flex w-fit items-center gap-1 rounded-lg border border-[var(--border-color-light)] bg-[var(--surface-2)] p-1 shadow-sm group-data-horizontal/tabs:h-auto dark:border-white/[0.09]">
+                <TabsList className="flex w-fit items-center gap-1 rounded-xl border border-[var(--header-floating-border)] bg-[var(--surface-2)] p-1 shadow-sm group-data-horizontal/tabs:h-auto">
                   <TabsTrigger 
                     value="screening" 
-                    className="rounded-md px-4 py-1.5 text-sm font-medium transition-colors border border-transparent data-[state=active]:bg-background data-[state=active]:text-[var(--text-heading)] data-[state=active]:shadow-[0_1px_2px_rgba(var(--shadow-rgb),0.05)] data-[state=active]:border-[var(--border-color-light)] dark:data-[state=active]:border-white/[0.09]"
+                    className="rounded-lg px-4 py-2 text-sm font-medium transition-colors border border-transparent data-[state=active]:bg-background data-[state=active]:text-[var(--text-primary)] data-[state=active]:shadow-sm data-[state=active]:border-[var(--header-floating-border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     Screening ({localScreeningQuestions.length})
                   </TabsTrigger>
                   <TabsTrigger 
                     value="regular" 
-                    className="rounded-md px-4 py-1.5 text-sm font-medium transition-colors border border-transparent data-[state=active]:bg-background data-[state=active]:text-[var(--text-heading)] data-[state=active]:shadow-[0_1px_2px_rgba(var(--shadow-rgb),0.05)] data-[state=active]:border-[var(--border-color-light)] dark:data-[state=active]:border-white/[0.09]"
+                    className="rounded-lg px-4 py-2 text-sm font-medium transition-colors border border-transparent data-[state=active]:bg-background data-[state=active]:text-[var(--text-primary)] data-[state=active]:shadow-sm data-[state=active]:border-[var(--header-floating-border)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                   >
                     AI Interview ({localRegularQuestions.length})
                   </TabsTrigger>
@@ -473,7 +480,8 @@ export default function QuestionnaireDetailPage() {
                           setSelectedQuestion({ order: items.length + 1, question_type: tab === "screening" ? "screening" : "behavioral" });
                           setIsQuestionModalOpen(true);
                         }}
-                        className="rounded-xl h-10 font-semibold bg-gradient-to-br from-[var(--primary-color)] to-[var(--primary-hover)] text-white shadow-md hover:brightness-110 border-0"
+                        variant="outline"
+                        className="h-10 rounded-xl px-5 border-[var(--header-floating-border)] bg-background hover:bg-[var(--surface-2)] text-[var(--text-primary)] shadow-sm"
                       >
                         <Plus className="mr-2 h-4 w-4" />
                         Add Question
@@ -481,15 +489,25 @@ export default function QuestionnaireDetailPage() {
                     </div>
 
                     {items.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center rounded-[var(--radius-md)] border border-dashed border-[var(--border-color-light)] bg-[var(--surface-2)] py-16 text-center dark:border-white/[0.09]">
-                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-                          <MessageSquare className="h-6 w-6 text-muted-foreground" />
+                      <div className="flex flex-col items-center justify-center rounded-[var(--radius-md)] border-2 border-dashed border-[var(--header-floating-border)] bg-background/50 py-16 text-center">
+                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--surface-2)] text-[var(--text-muted)]">
+                          <MessageSquare className="h-6 w-6" />
                         </div>
-                        <h3 className="mb-1 text-base font-semibold text-foreground">No questions yet</h3>
-                        <p className="text-sm text-muted-foreground mb-4">Click &apos;Add Question&apos; to create your first question</p>
+                        <h3 className="mb-1 text-base font-semibold text-[var(--text-primary)]">No questions yet</h3>
+                        <p className="text-sm text-[var(--text-secondary)] mb-6 max-w-[260px]">Click 'Add Question' to create your first question for this section.</p>
+                        <Button 
+                          onClick={() => {
+                            setSelectedQuestion({ order: items.length + 1, question_type: tab === "screening" ? "screening" : "behavioral" });
+                            setIsQuestionModalOpen(true);
+                          }}
+                          className="h-10 rounded-xl px-5 font-semibold bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] text-white shadow-sm"
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Question
+                        </Button>
                       </div>
                     ) : (
-                      <div className="flex flex-col gap-3">
+                      <div className="flex flex-col gap-4">
                         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                           <SortableContext items={items.map(q => q.id!)} strategy={verticalListSortingStrategy}>
                             {items.map((q, idx) => (

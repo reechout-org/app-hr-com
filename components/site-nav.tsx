@@ -13,7 +13,7 @@ import {
 } from "react";
 
 import { useLenis } from "@/components/lenis-provider";
-import { REECHOUT_CONNECT_URL } from "@/lib/site/marketing-site";
+import { REECHOUT_CONNECT_URL, SITE_LOGO } from "@/lib/site/marketing-site";
 import { THEME_KEY } from "@/lib/ui/theme";
 import { motion, useReducedMotion } from "framer-motion";
 import {
@@ -262,7 +262,7 @@ export function SiteNav({
           aria-label="ReechOut Home"
         >
           <Image
-            src="https://storage.googleapis.com/images.reechout.com/android-chrome-192x192.webp"
+            src={SITE_LOGO}
             alt=""
             width={52}
             height={52}
@@ -331,7 +331,7 @@ export function SiteNav({
                   aria-labelledby="nav-solutions-trigger"
                   className="absolute left-0 top-full z-[1200] min-w-[240px] pt-1"
                 >
-                  <div className="rounded-xl border border-[var(--header-floating-border)] bg-[var(--site-nav-panel-bg)] py-1 shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.14)]">
+                  <div className="rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--site-nav-panel-bg)] py-1 shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.14)]">
                     {SOLUTION_NAV_ITEMS.map(({ href, label, Icon }) => {
                       const active =
                         pathname === href || pathname.startsWith(`${href}/`);
@@ -397,7 +397,7 @@ export function SiteNav({
             }
             transition={springNav}
             className={cn(
-              "flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--border-color-light)] bg-transparent text-[var(--text-on-purple)] transition-[border-color,background-color,color] duration-200 hover:border-[var(--accent-purple)] hover:bg-white/[0.05] hover:text-[var(--accent-purple)]",
+              "flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-transparent text-[var(--text-on-purple)] transition-[border-color,background-color,color] duration-200 hover:border-[var(--accent-purple)] hover:bg-white/[0.05] hover:text-[var(--accent-purple)]",
               isFloating &&
                 "h-8 w-8 max-[480px]:h-[30px] max-[480px]:w-[30px] md:h-10 md:w-10",
             )}
@@ -482,7 +482,7 @@ export function SiteNav({
           />
           <div
             className={cn(
-              "absolute left-3 right-3 max-h-[min(70vh,calc(100vh-6rem))] overflow-auto rounded-2xl border border-[var(--site-nav-border)] bg-[var(--site-nav-panel-bg)] p-2 shadow-[var(--shadow-medium)]",
+              "absolute left-3 right-3 max-h-[min(70vh,calc(100vh-6rem))] overflow-auto rounded-[var(--radius-md)] border border-[var(--site-nav-border)] bg-[var(--site-nav-panel-bg)] p-2 shadow-[var(--shadow-medium)]",
               isFloating
                 ? "top-[max(5rem,calc(env(safe-area-inset-top,0px)+4rem))] border-[var(--header-floating-border)] shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.12)]"
                 : "top-[calc(var(--site-nav-height)+0.5rem)]",

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { SITE_LOGO } from "@/lib/site/marketing-site";
+
 export type AuthWordmarkProps = {
   href?: string;
   /**
@@ -22,7 +24,7 @@ export function AuthWordmark({
 }: AuthWordmarkProps) {
   const logoImg = (
     <Image
-      src="https://storage.googleapis.com/images.reechout.com/android-chrome-192x192.webp"
+      src={SITE_LOGO}
       alt=""
       width={imageSize}
       height={imageSize}

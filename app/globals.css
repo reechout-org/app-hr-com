@@ -717,4 +717,17 @@ body {
   html {
     @apply font-sans;
   }
+
+  /*
+   * Tailwind preflight gives buttons a default (arrow) cursor. Restore the
+   * standard web affordance for primary actions; components can still override
+   * (e.g. cursor-default on menu rows) via utilities, which win over base.
+   */
+  button:enabled,
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  a[href] {
+    cursor: pointer;
+  }
 }

@@ -35,7 +35,7 @@ export function AuthThemeToggle() {
         onClick={toggleTheme}
         title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
         aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-[var(--border-color-light)] bg-transparent text-[var(--text-on-purple)] transition-[border-color,background-color,color] duration-200 hover:border-[var(--accent-purple)] hover:bg-white/[0.05] hover:text-[var(--accent-purple)] dark:hover:bg-white/[0.08]"
+        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-transparent text-[var(--text-on-purple)] transition-[border-color,background-color,color] duration-200 hover:border-[var(--accent-purple)] hover:bg-white/[0.05] hover:text-[var(--accent-purple)] dark:hover:bg-white/[0.08]"
       >
         {darkMode ? (
           <Sun className="h-5 w-5" aria-hidden strokeWidth={2} />

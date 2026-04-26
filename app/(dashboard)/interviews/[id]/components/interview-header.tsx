@@ -36,9 +36,9 @@ export function InterviewDetailHeader({
   };
 
   return (
-    <div className="mb-6 flex flex-col gap-6 rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--surface-1)] p-6 shadow-sm dark:border-white/[0.09] md:flex-row md:items-start md:justify-between">
+    <div className="mb-6 flex flex-col gap-6 rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-5 sm:p-6 shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09)] transition-all hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] hover:border-[rgba(var(--primary-color-rgb),0.28)] md:flex-row md:items-start md:justify-between">
       <div className="flex flex-col gap-3">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-[var(--text-primary)]">
           {interview.questionnaire_title}
         </h1>
         <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -50,7 +50,7 @@ export function InterviewDetailHeader({
           >
             {interview.status || 'Pending'}
           </span>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
             <Calendar className="h-4 w-4" />
             <span>
               {interview.scheduled_date
@@ -59,14 +59,14 @@ export function InterviewDetailHeader({
             </span>
           </div>
           {interview.deadline && (
-            <div className="flex items-center gap-1.5 text-muted-foreground">
+            <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
               <Clock className="h-4 w-4" />
               <span>
                 Deadline: {format(new Date(interview.deadline), "MMM d, yyyy")}
               </span>
             </div>
           )}
-          <div className="flex items-center gap-1.5 text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
             <Users className="h-4 w-4" />
             <span>
               {interview.candidates?.length || 0} Candidate
@@ -76,13 +76,13 @@ export function InterviewDetailHeader({
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-wrap items-center gap-3">
+      <div className="flex shrink-0 flex-wrap items-center gap-3 mt-2 md:mt-0">
         <Button
           variant="outline"
-          className="h-10 rounded-xl"
+          className="h-10 rounded-xl border-[var(--header-floating-border)] bg-background text-[var(--text-primary)] hover:bg-[var(--surface-2)] shadow-sm"
           onClick={onShareLink}
         >
-          <LinkIcon className="mr-2 h-4 w-4" />
+          <LinkIcon className="mr-2 h-4 w-4 text-[var(--text-muted)]" />
           Invite by Link
         </Button>
       </div>

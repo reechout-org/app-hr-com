@@ -48,7 +48,7 @@ const ICON_WELL: Record<
 function MiniInterview() {
   return (
     <div className="mt-3 flex flex-col gap-3">
-      <div className="rounded-2xl border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08] dark:bg-white/[0.04]">
+      <div className="rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08] dark:bg-white/[0.04]">
         <div className="mb-3 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-violet)] text-[10px] font-extrabold text-white">
@@ -116,7 +116,7 @@ function MiniTeam() {
 
 function MiniAlerts() {
   return (
-    <div className="mt-3 rounded-2xl border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
+    <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
       <div className="mb-3 flex items-center gap-2">
         <div className="rounded-lg bg-[rgba(var(--brand-blue-modern-rgb),0.12)] p-1.5 text-[var(--brand-blue-modern)]">
           <Bell className="h-4 w-4" aria-hidden strokeWidth={2} />
@@ -195,7 +195,7 @@ function MiniScores() {
     { label: "Depth", w: "64%", c: "bg-[var(--warning-color)]" },
   ];
   return (
-    <div className="mt-3 space-y-3 rounded-2xl border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
+    <div className="mt-3 space-y-3 rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
       <div className="flex items-center justify-between text-[12px] font-extrabold text-[var(--text-heading)]">
         <span>Signal snapshot</span>
         <span className="text-[var(--primary-color)]">Updated</span>
@@ -246,7 +246,7 @@ function MiniRisk() {
 
 function MiniPartner() {
   return (
-    <div className="mt-3 rounded-2xl border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
+    <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--surface-2)] p-4 dark:border-white/[0.08]">
       <div className="flex gap-3">
         <div className="relative shrink-0">
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-[var(--primary-color)] to-[var(--accent-violet)] text-[11px] font-extrabold text-white">
@@ -362,7 +362,7 @@ export function HomeWhyChooseBento() {
               key={card.title}
               variants={reduceMotion ? undefined : cardMotion}
               className={cn(
-                "ro-bento-card group relative flex min-h-[380px] flex-col overflow-hidden rounded-[24px] border border-[var(--border-color-light)] bg-[var(--background-color)] outline-none transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background-color)] hover:-translate-y-1 hover:border-[rgba(var(--primary-color-rgb),0.28)] hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] dark:border-white/[0.09] dark:hover:border-[rgba(var(--accent-violet-rgb),0.35)]",
+                "ro-bento-card group relative flex min-h-[380px] flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--border-color-light)] bg-[var(--background-color)] outline-none transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] focus-visible:ring-2 focus-visible:ring-[var(--primary-color)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background-color)] hover:-translate-y-1 hover:border-[rgba(var(--primary-color-rgb),0.28)] hover:shadow-[0_20px_40px_rgba(var(--shadow-rgb),0.08)] dark:border-white/[0.09] dark:hover:border-[rgba(var(--accent-violet-rgb),0.35)]",
                 card.span === "full" && "md:col-span-2 lg:col-span-3",
               )}
               tabIndex={0}
@@ -370,7 +370,7 @@ export function HomeWhyChooseBento() {
             >
               <div className="ro-bento-front flex h-full min-h-[380px] flex-col p-8">
                 <div
-                  className="mb-6 flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
+                  className="mb-6 flex h-14 w-14 shrink-0 items-center justify-center rounded-[var(--radius-md)]"
                   style={{ background: well.bg, color: well.color }}
                 >
                   <WhyChooseIcon name={card.icon} className="h-7 w-7" />

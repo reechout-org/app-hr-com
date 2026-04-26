@@ -77,7 +77,7 @@ export function AddCandidateModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[24px] dark:border-white/[0.09]">
+      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09]">
         <div className="flex flex-col">
           <div className="flex items-center justify-between border-b border-[var(--border-color-light)] bg-[var(--surface-2)] px-6 py-4 dark:border-white/[0.09]">
             <DialogHeader className="p-0 text-left">
@@ -87,7 +87,7 @@ export function AddCandidateModal({
             </DialogHeader>
           </div>
 
-          <form onSubmit={handleSave} className="flex flex-col gap-5 p-6 overflow-y-auto" data-lenis-prevent>
+          <form onSubmit={handleSave} className="flex flex-col gap-5 p-6 overflow-y-auto">
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">
                 <Label htmlFor="first_name" className="text-[13px] font-semibold uppercase tracking-wide text-muted-foreground">

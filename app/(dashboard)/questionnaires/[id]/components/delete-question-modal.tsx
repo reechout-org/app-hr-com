@@ -33,7 +33,7 @@ export function DeleteQuestionModal({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && !isDeleting && onClose()}>
-      <AlertDialogContent className="max-w-[520px] w-[95vw] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] sm:rounded-[var(--radius-md)] dark:border-white/[0.09]">
+      <AlertDialogContent className="max-w-[520px] w-[95vw] p-0 overflow-hidden border-[var(--border-color-light)] bg-[var(--background-color)] shadow-[0_24px_48px_rgba(var(--shadow-rgb),0.12)] rounded-[var(--radius-md)] dark:border-white/[0.09]">
         
         <div className="flex items-center gap-4 border-b border-[var(--border-color-light)] bg-[var(--surface-2)] dark:border-white/[0.09] p-6">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-destructive/30 bg-destructive/10 text-destructive shadow-sm">
