@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useRef, useState, type ComponentType, type SVGProps } from "react";
 import { 
   CheckCircle, 
   FileText, 
@@ -24,6 +24,8 @@ interface ScreeningReportModalProps {
   onClose: () => void;
   candidate: InterviewCandidate | null;
 }
+
+type ReportNavIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 type SectionKey = 'scores' | 'evaluation' | 'answers';
 
@@ -285,7 +287,7 @@ export function ScreeningReportModal({
   );
 }
 
-function NavItem({ icon: Icon, label, isActive, onClick }: { icon: React.ElementType, label: string, isActive: boolean, onClick: () => void }) {
+function NavItem({ icon: Icon, label, isActive, onClick }: { icon: ReportNavIcon; label: string; isActive: boolean; onClick: () => void }) {
   return (
     <div 
       className={cn(

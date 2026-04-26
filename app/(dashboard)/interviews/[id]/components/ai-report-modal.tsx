@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useRef, useState, type ComponentType, type SVGProps } from "react";
 import { 
   Check, 
   CheckCircle, 
@@ -28,6 +28,9 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+
+/** Lucide / SVG icons passed as components — `ElementType` loses `className` under strict TS. */
+type ReportModalIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 interface AiReportModalProps {
   isOpen: boolean;
@@ -549,7 +552,7 @@ export function AiReportModal({
 /* Sub-components & Icons                                                     */
 /* -------------------------------------------------------------------------- */
 
-function NavItem({ icon: Icon, label, isActive, onClick }: { icon: React.ElementType, label: string, isActive: boolean, onClick: () => void }) {
+function NavItem({ icon: Icon, label, isActive, onClick }: { icon: ReportModalIcon; label: string; isActive: boolean; onClick: () => void }) {
   return (
     <div 
       className={cn(
@@ -564,7 +567,7 @@ function NavItem({ icon: Icon, label, isActive, onClick }: { icon: React.Element
   );
 }
 
-function SecondaryScoreCard({ icon: Icon, label, score, color }: { icon: React.ElementType, label: string, score?: string | number | null, color: string }) {
+function SecondaryScoreCard({ icon: Icon, label, score, color }: { icon: ReportModalIcon; label: string; score?: string | number | null; color: string }) {
   return (
     <div className="flex items-center gap-4 p-5 rounded-[16px] bg-[var(--surface-2)] border border-[var(--border-color-light)] dark:border-white/5">
       <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-[var(--surface-3)]">
@@ -580,7 +583,7 @@ function SecondaryScoreCard({ icon: Icon, label, score, color }: { icon: React.E
   );
 }
 
-function AnalysisSection({ id, title, subtitle, icon: Icon, score, summary, skills }: { id: string, title: string, subtitle: string, icon: React.ElementType, score?: string | number | null, summary?: string | null, skills?: string[] | null }) {
+function AnalysisSection({ id, title, subtitle, icon: Icon, score, summary, skills }: { id: string; title: string; subtitle: string; icon: ReportModalIcon; score?: string | number | null; summary?: string | null; skills?: string[] | null }) {
   const getScoreColor = (s: number | string | null | undefined) => {
     if (!s) return "var(--text-secondary)";
     const num = typeof s === 'string' ? parseFloat(s) : s;
@@ -655,7 +658,7 @@ function AnalysisSection({ id, title, subtitle, icon: Icon, score, summary, skil
   );
 }
 
-function DetailCard({ title, icon: Icon, children }: { title: string, icon: React.ElementType, children: React.ReactNode }) {
+function DetailCard({ title, icon: Icon, children }: { title: string; icon: ReportModalIcon; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-5 p-6 rounded-[20px] bg-[var(--surface-2)] border border-[var(--border-color-light)] dark:border-white/5">
       <div className="flex items-center gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ComponentType, type SVGProps } from "react";
 import { format } from "date-fns";
 import {
   Bot,
@@ -40,6 +40,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+
+type TableActionIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
 interface CandidatesTableProps {
   candidates: InterviewCandidate[];
@@ -94,7 +96,7 @@ const Section = ({ children, className }: { children: React.ReactNode; className
   </div>
 );
 
-const ActionTrigger = ({ icon: Icon, title, subtitle, onClick, disabled }: { icon: React.ElementType, title: string, subtitle: string, onClick?: () => void, disabled?: boolean }) => (
+const ActionTrigger = ({ icon: Icon, title, subtitle, onClick, disabled }: { icon: TableActionIcon; title: string; subtitle: string; onClick?: () => void; disabled?: boolean }) => (
   <div 
     className={cn(
       "flex items-center gap-[8px] p-[10px_14px] border border-[var(--header-floating-border)] bg-background rounded-xl w-full sm:w-auto min-w-[120px] transition-all duration-200 group/btn",
