@@ -300,7 +300,7 @@ function QuestionnairesDashboard() {
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-3">
             <FilterDropdown
-              label="Created Date"
+              label="Date"
               value={dateFilter}
               onChange={setDateFilter}
               options={[

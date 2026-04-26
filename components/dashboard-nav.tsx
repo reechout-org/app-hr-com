@@ -99,15 +99,15 @@ export function DashboardNav({ onCreateNew }: DashboardNavProps) {
 
         {/* Center: Navigation Tabs */}
         <nav className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-sm:hidden">
-          <ul className="flex items-center gap-1 rounded-lg border border-border bg-card p-1 shadow-sm">
+          <ul className="flex items-center gap-1 rounded-[14px] border border-[var(--header-floating-border)] bg-[var(--surface-1)] p-1 shadow-sm">
             <li>
               <Link
                 href="/interviews"
                 className={cn(
-                  "block rounded-md px-4 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "block rounded-[10px] px-4 py-1.5 text-[14px] transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)]",
                   activeTab === "interviews"
-                    ? "bg-background text-primary shadow-sm border border-border"
-                    : "text-muted-foreground hover:text-foreground border border-transparent"
+                    ? "bg-[var(--background-color)] font-bold text-[var(--text-primary)] shadow-sm border border-[var(--header-floating-border)]"
+                    : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-2)] border border-transparent"
                 )}
               >
                 Interviews
@@ -117,10 +117,10 @@ export function DashboardNav({ onCreateNew }: DashboardNavProps) {
               <Link
                 href="/questionnaires"
                 className={cn(
-                  "block rounded-md px-4 py-1.5 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "block rounded-[10px] px-4 py-1.5 text-[14px] transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)]",
                   activeTab === "questionnaires"
-                    ? "bg-background text-primary shadow-sm border border-border"
-                    : "text-muted-foreground hover:text-foreground border border-transparent"
+                    ? "bg-[var(--background-color)] font-bold text-[var(--text-primary)] shadow-sm border border-[var(--header-floating-border)]"
+                    : "font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-2)] border border-transparent"
                 )}
               >
                 Questionnaires
