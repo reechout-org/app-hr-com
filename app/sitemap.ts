@@ -8,6 +8,7 @@ const MARKETING_PATHS = [
   "/about-us",
   "/contact",
   "/blog",
+  "/interview",
   "/questionnaire",
   "/reports",
   "/privacy-policy",
