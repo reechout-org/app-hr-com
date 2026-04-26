@@ -4,6 +4,12 @@ import { SITE_BASE_URL } from "@/lib/site/marketing-site";
 /** Canonical home URL and SEO text — must match [components/hero-section.tsx] h1 + first hero paragraph. */
 export const homeCanonical = `${SITE_BASE_URL}/`;
 
+/** RegulateIQ-style hero badge (pill + pulse) and muted line under primary CTA. */
+export const HOME_HERO_BADGE = "AI voice interviews & hiring signal";
+
+export const HOME_HERO_TIP =
+  "No credit card required · Every candidate gets the same structured evaluation — compare on signal, not polish.";
+
 export const HOME_SEO = {
   title:
     "ReechOut — Hiring based on how candidates think, not resumes | AI Interviews & Shortlists",

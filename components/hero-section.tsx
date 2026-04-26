@@ -4,8 +4,8 @@ import Image from "next/image";
 import { Fragment } from "react";
 import { motion } from "framer-motion";
 
+import { HOME_HERO_BADGE, HOME_HERO_TIP } from "@/app/home-content";
 import { PAGE_SHELL_CLASS } from "@/components/page-shell";
-import { IconCheckCircle } from "./home/home-icons";
 import { PrimaryCtaLink } from "./home/primary-cta-link";
 import { HeroParticleBackground } from "./hero-particle-background";
 
@@ -71,6 +71,17 @@ export function HeroSection() {
         animate="visible"
       >
         <div className="mx-auto flex max-w-[52rem] flex-col items-center text-center">
+          <motion.div
+            className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-[rgba(var(--primary-color-rgb),0.22)] bg-[rgba(var(--primary-color-rgb),0.08)] px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--primary-color)] dark:border-[rgba(var(--accent-violet-rgb),0.3)] dark:bg-[rgba(var(--primary-color-rgb),0.12)] dark:text-[var(--accent-violet)]"
+            variants={itemVariants}
+          >
+            <span
+              className="h-1.5 w-1.5 shrink-0 animate-[roBadgePulse_2s_ease-in-out_infinite] rounded-full bg-[var(--primary-color)] dark:bg-[#c4b5fd]"
+              aria-hidden
+            />
+            {HOME_HERO_BADGE}
+          </motion.div>
+
           <motion.h1 
             className="mb-4 text-[clamp(2.25rem,5vw,3.75rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-[var(--text-heading)] md:mb-6"
             variants={itemVariants}
@@ -125,24 +136,13 @@ export function HeroSection() {
               <span>Start Free Trial</span>
             </PrimaryCtaLink>
           </motion.div>
-          <motion.p 
-            className="mb-6 text-sm font-medium text-[var(--text-secondary)] md:mb-8"
-            variants={itemVariants}
-          >
-            No credit card required
-          </motion.p>
 
-          <motion.div 
-            className="mb-10 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 md:mb-12 md:gap-x-5 md:gap-y-4"
+          <motion.p
+            className="mb-10 max-w-[36rem] text-[13px] leading-relaxed text-[var(--text-muted)] opacity-[0.85] dark:text-white/40 dark:opacity-100 md:mb-12"
             variants={itemVariants}
           >
-            <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[var(--text-primary)]">
-              <IconCheckCircle className="h-4 w-4 shrink-0 text-[var(--success-emerald)]" />
-              <span>
-                Used by fast-growing startups to shortlist candidates faster
-              </span>
-            </div>
-          </motion.div>
+            {HOME_HERO_TIP}
+          </motion.p>
         </div>
 
         <motion.div 
