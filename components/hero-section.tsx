@@ -15,6 +15,9 @@ const STATS = [
   { v: "96%", l: "Interview accuracy" },
 ] as const;
 
+/** Cubic-bezier tuple — `as const` so Framer Motion types `ease` as `Easing`, not `number[]`. */
+const HERO_EASE = [0.22, 1, 0.36, 1] as const;
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -33,7 +36,7 @@ const itemVariants = {
     y: 0,
     transition: {
       duration: 0.6,
-      ease: [0.22, 1, 0.36, 1],
+      ease: HERO_EASE,
     },
   },
 };
@@ -46,7 +49,7 @@ const imageVariants = {
     scale: 1,
     transition: {
       duration: 0.8,
-      ease: [0.22, 1, 0.36, 1],
+      ease: HERO_EASE,
       delay: 0.6,
     },
   },

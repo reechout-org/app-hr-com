@@ -10,6 +10,7 @@ import {
 
 import type { Interview } from "@/lib/api/interviews";
 import { cn } from "@/lib/ui/cn";
+import { formatStatusLabel } from "@/lib/ui/format-status-label";
 import { Button } from "@/components/ui/button";
 
 interface InterviewDetailHeaderProps {
@@ -27,6 +28,7 @@ export function InterviewDetailHeader({
         return "border-[rgba(var(--success-color-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--success-color-rgb),0.08)] to-[rgba(var(--success-color-rgb),0.04)] text-[var(--success-color)]";
       case "processing":
       case "scheduled":
+      case "in_progress":
         return "border-[rgba(var(--brand-blue-modern-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--brand-blue-modern-rgb),0.08)] to-[rgba(var(--brand-blue-modern-rgb),0.04)] text-[var(--brand-blue-modern)]";
       case "failed":
         return "border-[rgba(var(--error-color-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--error-color-rgb),0.08)] to-[rgba(var(--error-color-rgb),0.04)] text-[var(--error-color)]";
@@ -48,7 +50,7 @@ export function InterviewDetailHeader({
               getStatusColor(interview.status || 'pending')
             )}
           >
-            {interview.status || 'Pending'}
+            {formatStatusLabel(interview.status)}
           </span>
           <div className="flex items-center gap-1.5 text-[var(--text-secondary)]">
             <Calendar className="h-4 w-4" />

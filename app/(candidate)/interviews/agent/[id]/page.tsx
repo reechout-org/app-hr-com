@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Orb as NewOrb } from "@/components/ui/orb";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/ui/cn";
+import { interviewsApi } from "@/lib/api/interviews";
 
 export type AgentState = "speaking" | "listening" | "thinking" | "connecting" | "idle" | null;
 
@@ -52,14 +53,14 @@ export default function WebVoiceAgentPage({ params }: AgentPageProps) {
   // Vapi refs
   const vapiRef = useRef<Vapi | null>(null);
 
-  // Fetch the configuration using candidate ID exactly as angular does
+  // Vapi config from backend (NEXT_PUBLIC_API_URL), same as Angular `assistant-data/:id/`
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["agent-data", candidateId],
     queryFn: async () => {
-      // Note: Assumes /api/interviews/candidates/{candidateId}/assistant/ exists
-      const res = await fetch(`/api/interviews/candidates/${candidateId}/assistant/`);
-      if (!res.ok) throw new Error("Failed to load interview. Please try again.");
-      const json = await res.json();
+      const json = await interviewsApi.getAssistantData(candidateId);
+      if (json?.error === "not_found" || json?.data == null) {
+        throw new Error("Failed to load interview. Please try again.");
+      }
       return json.data as AssistantData;
     },
     enabled: !!candidateId,

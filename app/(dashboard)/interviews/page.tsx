@@ -22,6 +22,7 @@ import { FloatingBtn } from "@/components/floating-btn";
 import { interviewsApi, type InterviewListItem } from "@/lib/api/interviews";
 import { useInterviewsStore, type ViewMode } from "@/stores/interviews-store";
 import { cn } from "@/lib/ui/cn";
+import { formatStatusLabel } from "@/lib/ui/format-status-label";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -155,6 +156,7 @@ function InterviewsDashboard() {
         return cn(baseClasses, "border-[rgba(var(--success-color-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--success-color-rgb),0.08)] to-[rgba(var(--success-color-rgb),0.04)] text-[var(--success-color)] hover:border-[rgba(var(--success-color-rgb),0.25)] hover:from-[rgba(var(--success-color-rgb),0.12)] hover:to-[rgba(var(--success-color-rgb),0.06)] hover:shadow-[0_4px_12px_rgba(var(--success-color-rgb),0.15)]");
       case "processing":
       case "scheduled":
+      case "in_progress":
         return cn(baseClasses, "border-[rgba(var(--brand-blue-modern-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--brand-blue-modern-rgb),0.08)] to-[rgba(var(--brand-blue-modern-rgb),0.04)] text-[var(--brand-blue-modern)] hover:border-[rgba(var(--brand-blue-modern-rgb),0.25)] hover:from-[rgba(var(--brand-blue-modern-rgb),0.12)] hover:to-[rgba(var(--brand-blue-modern-rgb),0.06)] hover:shadow-[0_4px_12px_rgba(var(--brand-blue-modern-rgb),0.15)]");
       case "failed":
         return cn(baseClasses, "border-[rgba(var(--error-color-rgb),0.15)] bg-gradient-to-br from-[rgba(var(--error-color-rgb),0.08)] to-[rgba(var(--error-color-rgb),0.04)] text-[var(--error-color)] hover:border-[rgba(var(--error-color-rgb),0.25)] hover:from-[rgba(var(--error-color-rgb),0.12)] hover:to-[rgba(var(--error-color-rgb),0.06)] hover:shadow-[0_4px_12px_rgba(var(--error-color-rgb),0.15)]");
@@ -163,10 +165,8 @@ function InterviewsDashboard() {
     }
   };
 
-  const getStatusText = (status: InterviewListItem["status"]) => {
-    if (!status) return "Pending";
-    return status.charAt(0).toUpperCase() + status.slice(1);
-  };
+  const getStatusText = (status: InterviewListItem["status"]) =>
+    formatStatusLabel(status);
 
   return (
     <div className="mx-auto w-full max-w-[1400px] pt-2 pb-2 sm:pt-3 sm:pb-3">

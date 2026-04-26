@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/ui/cn";
+import { formatStatusLabel } from "@/lib/ui/format-status-label";
 import type { InterviewCandidate } from "@/lib/api/interviews";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -66,6 +67,7 @@ const getStatusColor = (status: string) => {
     case "invited":
     case "accepted":
     case "rescheduled":
+    case "in_progress":
       return "text-[var(--brand-blue-modern)] bg-[rgba(var(--brand-blue-modern-rgb),0.1)] border-[rgba(var(--brand-blue-modern-rgb),0.2)]";
     case "declined":
     case "no_show":
@@ -236,6 +238,7 @@ export function CandidatesTable({
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="invited">Invited</SelectItem>
+              <SelectItem value="in_progress">In progress</SelectItem>
               <SelectItem value="accepted">Accepted</SelectItem>
               <SelectItem value="rescheduled">Rescheduled</SelectItem>
               <SelectItem value="declined">Declined</SelectItem>
@@ -442,7 +445,7 @@ export function CandidatesTable({
                       "inline-flex items-center gap-[4px] rounded-[8px] border px-[12px] py-[6px] text-xs font-semibold shadow-sm transition-transform duration-200 hover:-translate-y-[1px] hover:shadow-md w-fit capitalize", 
                       getStatusColor(candidate.status || 'pending')
                     )}>
-                      {candidate.status?.replace("_", " ") || 'Pending'}
+                      {formatStatusLabel(candidate.status)}
                       {candidate.status === 'screening_passed' && <CheckCircle className="h-[14px] w-[14px]" />}
                       {candidate.status === 'screening_rejected' && <XCircle className="h-[14px] w-[14px]" />}
                     </span>
