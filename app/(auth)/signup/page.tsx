@@ -38,7 +38,6 @@ import { AuthPasswordField } from "@/app/(auth)/components/AuthPasswordField";
 import { AuthWordmark } from "@/app/(auth)/components/AuthWordmark";
 import PasswordStrengthBar from "@/app/(auth)/components/PasswordStrengthBar";
 import { registerSchema, type RegisterFormValues } from "@/lib/auth/auth-schemas";
-import { splitFullName } from "@/lib/auth/auth-name";
 import { authApi, parseApiError, parseFieldErrors } from "@/lib/api";
 import { cn } from "@/lib/ui/cn";
 
@@ -60,7 +59,8 @@ export default function RegisterPage() {
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      full_name: "",
+      first_name: "",
+      last_name: "",
       email: "",
       password: "",
       confirm_password: "",
@@ -72,8 +72,7 @@ export default function RegisterPage() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (values: RegisterFormValues) => {
-      const { first_name, last_name } = splitFullName(values.full_name);
-      return authApi.signup(first_name, last_name, values.email, values.password);
+      return authApi.signup(values.first_name, values.last_name, values.email, values.password);
     },
     onSuccess: () => {
       router.replace("/login");
@@ -83,7 +82,8 @@ export default function RegisterPage() {
       for (const [key, msg] of Object.entries(fieldErrors)) {
         if (key === "email") setError("email", { message: msg });
         if (key === "password") setError("password", { message: msg });
-        if (key === "first_name" || key === "full_name") setError("full_name", { message: msg });
+        if (key === "first_name") setError("first_name", { message: msg });
+        if (key === "last_name") setError("last_name", { message: msg });
       }
       if (!Object.keys(fieldErrors).length) {
         setFormError(parseApiError(error));
@@ -123,18 +123,35 @@ export default function RegisterPage() {
                       {formError}
                     </div>
                   ) : null}
-                  <div>
-                    <label htmlFor="register-name" className={authLabelClassName}>
-                      Full Name
-                    </label>
-                    <AuthInputField
-                      id="register-name"
-                      autoComplete="name"
-                      placeholder="Jane Doe"
-                      icon={<User className="h-4 w-4" strokeWidth={2} aria-hidden />}
-                      {...register("full_name")}
-                    />
-                    <FieldError message={errors.full_name?.message} />
+                  
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label htmlFor="register-first-name" className={authLabelClassName}>
+                        First Name
+                      </label>
+                      <AuthInputField
+                        id="register-first-name"
+                        autoComplete="given-name"
+                        placeholder="Jane"
+                        icon={<User className="h-4 w-4" strokeWidth={2} aria-hidden />}
+                        {...register("first_name")}
+                      />
+                      <FieldError message={errors.first_name?.message} />
+                    </div>
+
+                    <div>
+                      <label htmlFor="register-last-name" className={authLabelClassName}>
+                        Last Name
+                      </label>
+                      <AuthInputField
+                        id="register-last-name"
+                        autoComplete="family-name"
+                        placeholder="Doe"
+                        icon={<User className="h-4 w-4" strokeWidth={2} aria-hidden />}
+                        {...register("last_name")}
+                      />
+                      <FieldError message={errors.last_name?.message} />
+                    </div>
                   </div>
 
                   <div>
