@@ -31,8 +31,8 @@ export default function CandidateSharePage({ params }: SharePageProps) {
 
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
     phone: "",
     preferredDateTime: "",
@@ -57,8 +57,8 @@ export default function CandidateSharePage({ params }: SharePageProps) {
       ? toDatetimeLocalValue(new Date(candidateData.schedule_date))
       : "";
     setFormData({
-      firstName: candidateData.first_name || "",
-      lastName: candidateData.last_name || "",
+      first_name: candidateData.first_name || "",
+      last_name: candidateData.last_name || "",
       email: candidateData.email || "",
       phone: candidateData.phone || "",
       preferredDateTime: preferredDate,
@@ -72,11 +72,11 @@ export default function CandidateSharePage({ params }: SharePageProps) {
         throw new Error("Invalid link");
       }
       return updateCandidatePortal(candidateId, interviewId, token, {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
         email: formData.email,
         phone: formData.phone,
-        scheduleDateIso: new Date(formData.preferredDateTime).toISOString(),
+        schedule_date_iso: new Date(formData.preferredDateTime).toISOString(),
       });
     },
     onSuccess: () => {
@@ -90,11 +90,11 @@ export default function CandidateSharePage({ params }: SharePageProps) {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    if (!formData.firstName.trim() || formData.firstName.length < 2) {
-      newErrors.firstName = "Please input your first name!";
+    if (!formData.first_name.trim() || formData.first_name.length < 2) {
+      newErrors.first_name = "Please input your first name!";
     }
-    if (!formData.lastName.trim() || formData.lastName.length < 2) {
-      newErrors.lastName = "Please input your last name!";
+    if (!formData.last_name.trim() || formData.last_name.length < 2) {
+      newErrors.last_name = "Please input your last name!";
     }
     if (!formData.email.trim() || !/^\S+@\S+\.\S+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address!";
@@ -242,16 +242,16 @@ export default function CandidateSharePage({ params }: SharePageProps) {
                       First Name <span className="text-[var(--error-color)]">*</span>
                     </Label>
                     <Input
-                      value={formData.firstName}
-                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      value={formData.first_name}
+                      onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
                       placeholder="e.g. Emily"
                       className={cn(
                         "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
-                        errors.firstName && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                        errors.first_name && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
                       )}
                     />
-                    {errors.firstName && (
-                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.firstName}</span>
+                    {errors.first_name && (
+                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.first_name}</span>
                     )}
                   </div>
 
@@ -260,16 +260,16 @@ export default function CandidateSharePage({ params }: SharePageProps) {
                       Last Name <span className="text-[var(--error-color)]">*</span>
                     </Label>
                     <Input
-                      value={formData.lastName}
-                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      value={formData.last_name}
+                      onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
                       placeholder="e.g. Chen"
                       className={cn(
                         "h-12 rounded-xl border-[var(--header-floating-border)] bg-background px-4 text-[15px] shadow-sm focus-visible:ring-[var(--primary-color)]",
-                        errors.lastName && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
+                        errors.last_name && "border-[var(--error-color)] focus-visible:ring-[var(--error-color)]"
                       )}
                     />
-                    {errors.lastName && (
-                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.lastName}</span>
+                    {errors.last_name && (
+                      <span className="text-xs font-medium text-[var(--error-color)]">{errors.last_name}</span>
                     )}
                   </div>
                 </div>

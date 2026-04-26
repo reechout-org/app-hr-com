@@ -28,8 +28,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/ui/cn";
 
 const basicInfoSchema = z.object({
-  firstName: z.string().min(2, "First name is required"),
-  lastName: z.string().min(2, "Last name is required"),
+  first_name: z.string().min(2, "First name is required"),
+  last_name: z.string().min(2, "Last name is required"),
   email: z.string().email("Invalid email address"),
   countryCode: z.string(),
   phoneNumber: z.string().regex(/^\d{7,14}$/, "Phone number must be 7-14 digits"),
@@ -148,8 +148,8 @@ export default function ScreeningPage() {
       const basicInfo = basicInfoForm.getValues();
       const formData = new FormData();
       formData.append("interview_id", interviewId);
-      formData.append("first_name", basicInfo.firstName);
-      formData.append("last_name", basicInfo.lastName);
+      formData.append("first_name", basicInfo.first_name);
+      formData.append("last_name", basicInfo.last_name);
       formData.append("email", basicInfo.email);
       
       const countryCode = COUNTRY_CODES.find(c => c.value === basicInfo.countryCode)?.code || "+1";
@@ -344,17 +344,17 @@ export default function ScreeningPage() {
                 <form onSubmit={basicInfoForm.handleSubmit(onBasicInfoSubmit)} className="space-y-6">
                   <div className="grid sm:grid-cols-2 gap-5">
                     <div className="space-y-2">
-                      <Label htmlFor="firstName" className="text-sm font-medium text-[var(--text-primary)]">First Name <span className="text-[var(--error-color)]">*</span></Label>
-                      <Input id="firstName" {...basicInfoForm.register("firstName")} placeholder="e.g. Emily" className="h-11 rounded-xl bg-background border-[var(--header-floating-border)] focus-visible:ring-[var(--primary-color)]" />
-                      {basicInfoForm.formState.errors.firstName && (
-                        <p className="text-xs text-[var(--error-color)] font-medium">{basicInfoForm.formState.errors.firstName.message}</p>
+                      <Label htmlFor="first_name" className="text-sm font-medium text-[var(--text-primary)]">First Name <span className="text-[var(--error-color)]">*</span></Label>
+                      <Input id="first_name" {...basicInfoForm.register("first_name")} placeholder="e.g. Emily" className="h-11 rounded-xl bg-background border-[var(--header-floating-border)] focus-visible:ring-[var(--primary-color)]" />
+                      {basicInfoForm.formState.errors.first_name && (
+                        <p className="text-xs text-[var(--error-color)] font-medium">{basicInfoForm.formState.errors.first_name.message}</p>
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="lastName" className="text-sm font-medium text-[var(--text-primary)]">Last Name <span className="text-[var(--error-color)]">*</span></Label>
-                      <Input id="lastName" {...basicInfoForm.register("lastName")} placeholder="e.g. Chen" className="h-11 rounded-xl bg-background border-[var(--header-floating-border)] focus-visible:ring-[var(--primary-color)]" />
-                      {basicInfoForm.formState.errors.lastName && (
-                        <p className="text-xs text-[var(--error-color)] font-medium">{basicInfoForm.formState.errors.lastName.message}</p>
+                      <Label htmlFor="last_name" className="text-sm font-medium text-[var(--text-primary)]">Last Name <span className="text-[var(--error-color)]">*</span></Label>
+                      <Input id="last_name" {...basicInfoForm.register("last_name")} placeholder="e.g. Chen" className="h-11 rounded-xl bg-background border-[var(--header-floating-border)] focus-visible:ring-[var(--primary-color)]" />
+                      {basicInfoForm.formState.errors.last_name && (
+                        <p className="text-xs text-[var(--error-color)] font-medium">{basicInfoForm.formState.errors.last_name.message}</p>
                       )}
                     </div>
                   </div>

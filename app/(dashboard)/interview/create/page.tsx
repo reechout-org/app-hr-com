@@ -118,10 +118,6 @@ export default function CreateInterviewPage() {
       toast.warning("Please select an interview deadline");
       return;
     }
-    if (candidates.length === 0) {
-      toast.warning("Please add at least one candidate");
-      return;
-    }
 
     const payloadScheduledDate = scheduleType === "later" ? new Date(scheduledDate).toISOString() : new Date().toISOString();
     const payloadDeadline = new Date(deadline).toISOString();

@@ -141,20 +141,20 @@ export async function updateCandidatePortal(
   interviewId: string,
   accessToken: string,
   fields: {
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     email: string;
     phone: string;
-    scheduleDateIso: string;
+    schedule_date_iso: string;
   }
 ): Promise<unknown> {
   const formData = new FormData();
   formData.append("interview_id", interviewId);
-  formData.append("first_name", fields.firstName);
-  formData.append("last_name", fields.lastName);
+  formData.append("first_name", fields.first_name);
+  formData.append("last_name", fields.last_name);
   formData.append("email", fields.email);
   formData.append("phone", fields.phone);
-  formData.append("schedule_date", fields.scheduleDateIso);
+  formData.append("schedule_date", fields.schedule_date_iso);
   formData.append("id", candidateId);
 
   const base = getPublicApiBaseUrl();
