@@ -221,7 +221,7 @@ export default function ScreeningPage() {
 
   if (currentStep === "submitted") {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-background p-4 sm:p-8">
+      <div className="flex flex-1 w-full items-center justify-center bg-background p-4 sm:p-8">
         <div className="w-full max-w-xl overflow-hidden rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_8px_32px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl p-8 sm:p-12 text-center animate-in fade-in zoom-in-95 duration-500">
           <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[var(--success-color)]/10 ring-8 ring-[var(--success-color)]/5">
             <CheckCircle2 className="h-12 w-12 text-[var(--success-color)]" />
@@ -261,7 +261,7 @@ export default function ScreeningPage() {
 
   if (currentStep === "rejected") {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-background p-4 sm:p-8">
+      <div className="flex flex-1 w-full items-center justify-center bg-background p-4 sm:p-8">
         <div className="w-full max-w-xl overflow-hidden rounded-[var(--radius-md)] border border-[var(--error-color)]/20 bg-[var(--header-floating-bg)] shadow-[0_8px_32px_rgba(var(--error-color-rgb),0.05)] backdrop-blur-xl p-8 sm:p-12 text-center animate-in fade-in zoom-in-95 duration-500">
           <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[var(--error-color)]/10 ring-8 ring-[var(--error-color)]/5">
             <AlertCircle className="h-12 w-12 text-[var(--error-color)]" />
@@ -289,7 +289,7 @@ export default function ScreeningPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col relative">
+    <div className="flex-1 w-full bg-background flex flex-col relative">
       {/* Decorative top gradient */}
       <div className="absolute top-0 left-0 right-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent pointer-events-none" />
       

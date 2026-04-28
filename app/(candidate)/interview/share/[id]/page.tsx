@@ -15,7 +15,7 @@ export default function InterviewShareInterviewOnlyPage() {
   const { id: interviewId } = useParams() as { id: string };
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="relative flex flex-1 flex-col items-center justify-center bg-background p-4">
       <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
       <div className="relative z-10 w-full max-w-lg rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-8 shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl sm:p-10">
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--warning-color)]/10">
