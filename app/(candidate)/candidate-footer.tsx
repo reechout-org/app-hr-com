@@ -1,17 +1,15 @@
 import Link from "next/link";
-import { PAGE_SHELL_CLASS } from "@/lib/site/page-layout";
-import { cn } from "@/lib/ui/cn";
 
 export function CandidateFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="w-full border-t border-[var(--border-color-light)] bg-transparent py-8 dark:border-white/[0.08]">
-      <div className={cn(PAGE_SHELL_CLASS, "flex flex-col items-center justify-between gap-4 md:flex-row")}>
-        <p className="text-sm text-[var(--text-secondary)]">
+    <footer className="w-full flex-col items-stretch px-4 sm:px-6 lg:px-8 mt-auto mb-2 sm:mb-4 pt-4 sm:pt-8">
+      <div className="mx-auto flex w-full max-w-[1400px] min-h-[52px] items-center justify-between gap-3 rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] py-3 px-[clamp(0.875rem,2.5vw,1.125rem)] shadow-[0_4px_32px_rgba(var(--shadow-rgb),0.09),0_1px_4px_rgba(var(--shadow-rgb),0.05)] sm:px-[clamp(1.125rem,3.5vw,1.5rem)] lg:px-[clamp(1.25rem,4vw,2rem)] flex-col sm:flex-row">
+        <p className="text-sm font-medium text-[var(--text-secondary)]">
           © {year} ReechOut. All rights reserved.
         </p>
-        <div className="flex gap-6 text-sm text-[var(--text-muted)]">
+        <div className="flex items-center gap-4 sm:gap-6 text-sm font-medium text-[var(--text-secondary)]">
           <Link href="/privacy-policy" className="hover:text-[var(--primary-color)] transition-colors">
             Privacy Policy
           </Link>
