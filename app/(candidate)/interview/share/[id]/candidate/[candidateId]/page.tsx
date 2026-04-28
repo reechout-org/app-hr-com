@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import { Clock, CheckCircle2, AlertCircle, Loader2, CalendarCheck, Info } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -183,12 +183,16 @@ export default function CandidateSharePage({ params }: SharePageProps) {
     ? toDatetimeLocalValue(new Date(interviewDeadline))
     : undefined;
 
+  const isCompleted = candidateData?.status === "completed";
+  const isScheduled = candidateData?.status === "accepted" || candidateData?.status === "rescheduled";
+  const showForm = !submitted && !isCompleted && !isScheduled;
+
   return (
     <div className="relative flex min-h-screen flex-col bg-background selection:bg-[var(--primary-color)]/30">
       <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center p-4 sm:p-8">
-        {submitted ? (
+        {submitted && (
           <div className="flex w-full max-w-lg flex-col items-center rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
             <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[var(--success-color)]/10 ring-8 ring-[var(--success-color)]/5">
               <CheckCircle2 className="h-12 w-12 text-[var(--success-color)]" />
@@ -200,13 +204,55 @@ export default function CandidateSharePage({ params }: SharePageProps) {
               Thank you for registering. You will receive a confirmation email shortly with further details about your interview.
             </p>
             <div className="w-full rounded-2xl border border-[var(--header-floating-border)] bg-[var(--surface-2)] p-6 text-left">
-              <p className="flex items-center gap-2 text-[14px] font-medium text-[var(--text-primary)]">
-                <CheckCircle2 className="h-4 w-4 text-[var(--primary-color)]" />
-                Please check your email for interview instructions and preparation materials.
+              <p className="flex items-start gap-2 text-[14px] font-medium leading-relaxed text-[var(--text-primary)]">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary-color)]" />
+                <span>Please check your email for interview instructions and preparation materials.</span>
               </p>
             </div>
           </div>
-        ) : (
+        )}
+
+        {!submitted && isCompleted && (
+          <div className="flex w-full max-w-lg flex-col items-center rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
+            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[var(--primary-color)]/10 ring-8 ring-[var(--primary-color)]/5">
+              <Info className="h-12 w-12 text-[var(--primary-color)]" />
+            </div>
+            <h1 className="mb-4 text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
+              Interview Completed
+            </h1>
+            <p className="mx-auto mb-8 max-w-sm text-[15px] leading-relaxed text-[var(--text-secondary)]">
+              You have already completed this interview. Thank you for your time!
+            </p>
+            <div className="w-full rounded-2xl border border-[var(--header-floating-border)] bg-[var(--surface-2)] p-6 text-left">
+              <p className="flex items-start gap-2 text-[14px] font-medium leading-relaxed text-[var(--text-primary)]">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary-color)]" />
+                <span>The recruitment team is currently reviewing your results. You will be contacted if you are selected for the next stage.</span>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {!submitted && isScheduled && (
+          <div className="flex w-full max-w-lg flex-col items-center rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
+            <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-[var(--success-color)]/10 ring-8 ring-[var(--success-color)]/5">
+              <CalendarCheck className="h-12 w-12 text-[var(--success-color)]" />
+            </div>
+            <h1 className="mb-4 text-2xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-3xl">
+              Interview Scheduled
+            </h1>
+            <p className="mx-auto mb-8 max-w-sm text-[15px] leading-relaxed text-[var(--text-secondary)]">
+              Your interview is scheduled for <span className="font-semibold text-[var(--text-primary)]">{candidateData.schedule_date ? format(new Date(candidateData.schedule_date), "MMM d, yyyy 'at' h:mm a") : 'Unknown date'}</span>.
+            </p>
+            <div className="w-full rounded-2xl border border-[var(--header-floating-border)] bg-[var(--surface-2)] p-6 text-left">
+              <p className="flex items-start gap-2 text-[14px] font-medium leading-relaxed text-[var(--text-primary)]">
+                <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary-color)]" />
+                <span>Please check your email for interview instructions and preparation materials. If you need to reschedule, please contact the recruitment team.</span>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {showForm && (
           <div className="relative flex w-full flex-col overflow-hidden rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl">
             <div className="border-b border-[var(--header-floating-border)] bg-transparent px-6 py-6 sm:px-8 sm:pb-6 sm:pt-8">
               <div className="mb-3 inline-flex items-center rounded-md bg-[var(--primary-color)]/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-[var(--primary-color)]">
@@ -353,13 +399,15 @@ export default function CandidateSharePage({ params }: SharePageProps) {
                   </div>
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={submitMutation.isPending}
-                  className="mt-4 h-14 w-full rounded-xl text-[16px] font-bold text-white shadow-md transition-all duration-200 bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] hover:shadow-[0_8px_20px_rgba(var(--primary-color-rgb),0.25)] hover:-translate-y-0.5 active:translate-y-0"
-                >
-                  {submitMutation.isPending ? "Saving…" : "Register for Interview"}
-                </Button>
+                <div className="flex flex-col gap-3 sm:flex-row mt-4">
+                  <Button
+                    type="submit"
+                    disabled={submitMutation.isPending}
+                    className="h-14 w-full rounded-xl text-[16px] font-bold text-white shadow-md transition-all duration-200 bg-[var(--primary-color)] hover:bg-[var(--primary-hover)] hover:shadow-[0_8px_20px_rgba(var(--primary-color-rgb),0.25)] hover:-translate-y-0.5 active:translate-y-0"
+                  >
+                    {submitMutation.isPending ? "Saving…" : "Register for Interview"}
+                  </Button>
+                </div>
               </form>
             </div>
           </div>
