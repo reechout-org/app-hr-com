@@ -42,8 +42,14 @@ function processNotification(
 function showBrowserNotification(payload: any) {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
   const title = payload?.notification?.title || "New Notification";
-  const body = payload?.notification?.body || "";
-  new Notification(title, { body, icon: "/next.svg" });
+  new Notification(title, {
+    body: payload?.notification?.body || "",
+    icon: "/logo.png",
+    badge: "/logo.png",
+    tag: payload?.data?.questionnaire_id || "notification",
+    requireInteraction: false,
+    silent: false,
+  });
 }
 
 /**
@@ -113,6 +119,27 @@ export function useFcmInit() {
             }
           };
         }
+
+        // 6. Drain pending-notifications cache when tab becomes visible
+        async function drainPendingNotifications() {
+          if (!("caches" in window)) return;
+          try {
+            const cache = await caches.open("pending-notifications");
+            const keys = await cache.keys();
+            for (const request of keys) {
+              const response = await cache.match(request);
+              if (response) {
+                const data = await response.json();
+                if (data?.payload) processNotification(data.payload, setLatestUpdate);
+                await cache.delete(request);
+              }
+            }
+          } catch { /* ignore */ }
+        }
+
+        document.addEventListener("visibilitychange", () => {
+          if (document.visibilityState === "visible") drainPendingNotifications();
+        });
       } catch (error) {
         console.error("[useFcmInit] Error initializing FCM:", error);
         isInitialized.current = false; // Allow retrying on failure
