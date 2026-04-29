@@ -16,7 +16,7 @@ export default function InterviewShareInterviewOnlyPage() {
 
   return (
     <div className="relative flex flex-1 flex-col items-center justify-center p-4">
-      <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
+      <div className="pointer-events-none absolute -top-[120px] left-0 right-0 h-[420px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
       <div className="relative z-10 w-full max-w-lg rounded-[var(--radius-md)] border border-[var(--header-floating-border)] bg-[var(--header-floating-bg)] p-8 shadow-[0_12px_40px_rgba(var(--shadow-rgb),0.08)] backdrop-blur-xl sm:p-10">
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-[var(--warning-color)]/10">
           <AlertCircle className="h-8 w-8 text-[var(--warning-color)]" />

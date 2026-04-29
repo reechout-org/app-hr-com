@@ -140,7 +140,7 @@ export default function CandidateSharePage({ params }: SharePageProps) {
   if (!candidateId || !token) {
     return (
       <div className="relative flex w-full flex-1 items-center justify-center p-4">
-        <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
+        <div className="pointer-events-none absolute -top-[120px] left-0 right-0 h-[420px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
         <div className="relative z-10 flex w-full max-w-md flex-col items-center gap-4 rounded-[var(--radius-md)] border border-[var(--error-color)]/20 bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--error-color-rgb),0.05)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
           <div className="mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--error-color)]/10 ring-8 ring-[var(--error-color)]/5">
             <AlertCircle className="h-10 w-10 text-[var(--error-color)]" />
@@ -165,7 +165,7 @@ export default function CandidateSharePage({ params }: SharePageProps) {
   if (isError) {
     return (
       <div className="relative flex w-full flex-1 items-center justify-center p-4">
-        <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
+        <div className="pointer-events-none absolute -top-[120px] left-0 right-0 h-[420px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
         <div className="relative z-10 flex w-full max-w-md flex-col items-center gap-4 rounded-[var(--radius-md)] border border-[var(--error-color)]/20 bg-[var(--header-floating-bg)] p-8 text-center shadow-[0_12px_40px_rgba(var(--error-color-rgb),0.05)] backdrop-blur-xl sm:p-12 animate-in fade-in zoom-in-95 duration-500">
           <div className="mb-2 flex h-20 w-20 items-center justify-center rounded-full bg-[var(--error-color)]/10 ring-8 ring-[var(--error-color)]/5">
             <AlertCircle className="h-10 w-10 text-[var(--error-color)]" />
@@ -189,7 +189,7 @@ export default function CandidateSharePage({ params }: SharePageProps) {
 
   return (
     <div className="relative flex w-full flex-1 flex-col selection:bg-[var(--primary-color)]/30 py-12">
-      <div className="pointer-events-none absolute left-0 right-0 top-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
+      <div className="pointer-events-none absolute -top-[120px] left-0 right-0 h-[420px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent" />
 
       <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center p-4 sm:p-8">
         {submitted && (

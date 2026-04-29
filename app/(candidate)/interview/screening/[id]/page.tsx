@@ -291,7 +291,7 @@ export default function ScreeningPage() {
   return (
     <div className="flex-1 w-full flex flex-col relative">
       {/* Decorative top gradient */}
-      <div className="absolute top-0 left-0 right-0 h-[300px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent pointer-events-none" />
+      <div className="absolute -top-[120px] left-0 right-0 h-[420px] bg-gradient-to-b from-[var(--primary-color)]/5 to-transparent pointer-events-none" />
       
       <main className="flex-1 w-full max-w-3xl mx-auto px-4 py-8 sm:py-12 lg:py-16 relative z-10 flex flex-col">
         
