@@ -5,6 +5,8 @@ import { useMemo, useRef, useState } from "react";
 import {
   Camera,
   Check,
+  Eye,
+  EyeOff,
   KeyRound,
   Loader2,
   Mail,
@@ -74,6 +76,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [wasOpen, setWasOpen] = useState(isOpen);
   const [isDragging, setIsDragging] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Reset form state each time the modal is re-opened, without an effect.
@@ -85,6 +90,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     setCurrentPassword("");
     setNewPassword("");
     setConfirmPassword("");
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+    setShowConfirmPassword(false);
   } else if (!isOpen && wasOpen) {
     setWasOpen(false);
   }
@@ -227,6 +235,11 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
 
   const strength = useMemo(() => scorePassword(newPassword), [newPassword]);
   const confirmMatches = confirmPassword.length > 0 && confirmPassword === newPassword;
+  const passwordFormValid =
+    currentPassword.length > 0 &&
+    newPassword.length >= 8 &&
+    confirmMatches &&
+    newPassword !== currentPassword;
 
   const profileDirty =
     firstName.trim() !== (user?.first_name ?? "") ||
@@ -479,14 +492,14 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     label="Current Password"
                     required
                   >
-                    <Input
+                    <PasswordField
                       id="current_password"
-                      type="password"
                       value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="h-11 rounded-xl"
-                      autoComplete="current-password"
+                      onChange={setCurrentPassword}
+                      visible={showCurrentPassword}
+                      onToggleVisibility={() => setShowCurrentPassword((v) => !v)}
                       placeholder="••••••••"
+                      autoComplete="current-password"
                     />
                   </FieldGroup>
 
@@ -495,14 +508,14 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     label="New Password"
                     required
                   >
-                    <Input
+                    <PasswordField
                       id="new_password"
-                      type="password"
                       value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="h-11 rounded-xl"
-                      autoComplete="new-password"
+                      onChange={setNewPassword}
+                      visible={showNewPassword}
+                      onToggleVisibility={() => setShowNewPassword((v) => !v)}
                       placeholder="At least 8 characters"
+                      autoComplete="new-password"
                     />
                     <PasswordMeter
                       strength={strength}
@@ -515,23 +528,23 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     label="Confirm New Password"
                     required
                   >
-                    <div className="relative">
-                      <Input
-                        id="confirm_password"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className={cn(
-                          "h-11 rounded-xl pr-10",
-                          confirmMatches && "border-[var(--success-color)]/60",
-                        )}
-                        autoComplete="new-password"
-                        placeholder="Retype new password"
-                      />
-                      {confirmMatches && (
-                        <Check className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-[var(--success-color)]" />
+                    <PasswordField
+                      id="confirm_password"
+                      value={confirmPassword}
+                      onChange={setConfirmPassword}
+                      visible={showConfirmPassword}
+                      onToggleVisibility={() => setShowConfirmPassword((v) => !v)}
+                      placeholder="Retype new password"
+                      autoComplete="new-password"
+                      inputClassName={cn(
+                        confirmMatches && "border-[var(--success-color)]/60",
                       )}
-                    </div>
+                      rightAdornment={
+                        confirmMatches ? (
+                          <Check className="h-4 w-4 text-[var(--success-color)]" />
+                        ) : null
+                      }
+                    />
                   </FieldGroup>
 
                   <div className="mt-auto flex items-center justify-between border-t border-[var(--border-color-light)] pt-5 dark:border-white/[0.09]">
@@ -541,7 +554,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                     <Button
                       type="submit"
                       className="h-10 rounded-xl bg-[var(--primary-color)] px-5 font-semibold hover:bg-[var(--primary-color-hover)]"
-                      disabled={changePasswordMutation.isPending}
+                      disabled={
+                        changePasswordMutation.isPending || !passwordFormValid
+                      }
                     >
                       {changePasswordMutation.isPending ? (
                         "Updating…"
@@ -613,6 +628,58 @@ function FieldGroup({
       </Label>
       {children}
       {hint && <p className="text-[11.5px] text-[var(--text-muted)]">{hint}</p>}
+    </div>
+  );
+}
+
+function PasswordField({
+  id,
+  value,
+  onChange,
+  visible,
+  onToggleVisibility,
+  placeholder,
+  autoComplete,
+  inputClassName,
+  rightAdornment,
+}: {
+  id: string;
+  value: string;
+  onChange: (v: string) => void;
+  visible: boolean;
+  onToggleVisibility: () => void;
+  placeholder?: string;
+  autoComplete?: string;
+  inputClassName?: string;
+  rightAdornment?: React.ReactNode;
+}) {
+  return (
+    <div className="relative">
+      <Input
+        id={id}
+        type={visible ? "text" : "password"}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={cn(
+          "h-11 rounded-xl pr-20",
+          inputClassName,
+        )}
+        autoComplete={autoComplete}
+        placeholder={placeholder}
+      />
+      <div className="pointer-events-none absolute top-1/2 right-3 flex -translate-y-1/2 items-center gap-2">
+        {rightAdornment ? <div className="pointer-events-none">{rightAdornment}</div> : null}
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={onToggleVisibility}
+          aria-label={visible ? "Hide password" : "Show password"}
+          aria-pressed={visible}
+          className="pointer-events-auto flex h-6 w-6 items-center justify-center rounded text-[var(--text-secondary)] transition-colors hover:text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary-color)]/40"
+        >
+          {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
     </div>
   );
 }
