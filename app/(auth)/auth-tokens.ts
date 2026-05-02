@@ -9,7 +9,7 @@ export function authInputClassName(opts?: {
 }) {
   const { withLeadingIcon, withPasswordToggle, extra } = opts ?? {};
   return cn(
-    "h-[46px] w-full rounded-[10px] px-3.5 text-[15px] text-[var(--text-heading)]",
+    "h-[clamp(42px,5.2vh,46px)] w-full rounded-[10px] px-3.5 text-[15px] text-[var(--text-heading)]",
     "bg-[color-mix(in_srgb,var(--foreground)_3%,transparent)] backdrop-blur-sm",
     "border border-[color-mix(in_srgb,var(--foreground)_8%,transparent)]",
     "transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
@@ -74,7 +74,7 @@ export const authLinkPlainClassName =
 
 export const authSubmitButtonClassName = cn(
   "relative w-full cursor-pointer overflow-hidden rounded-[10px] border border-white/10 font-bold tracking-wide text-white text-[15px]",
-  "h-[46px] shadow-[0_4px_14px_rgba(var(--primary-color-rgb),0.35),inset_0_1px_0_rgba(255,255,255,0.2)]",
+  "h-[clamp(42px,5.2vh,46px)] shadow-[0_4px_14px_rgba(var(--primary-color-rgb),0.35),inset_0_1px_0_rgba(255,255,255,0.2)]",
   "bg-gradient-to-b from-[var(--color-primary)] to-[var(--color-primary-hover)]",
   "transition-all duration-200 ease-[cubic-bezier(0.23,1,0.32,1)]",
   "before:pointer-events-none before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/[0.12] before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity",
@@ -93,7 +93,7 @@ export const authCardClassName = cn(
   "backdrop-blur-[16px] dark:shadow-[0_32px_64px_-16px_rgba(0,0,0,0.4),0_0_0_1px_rgba(var(--color-primary-rgb),0.05),0_8px_40px_rgba(var(--color-primary-rgb),0.08)]",
 );
 
-export const authCardInnerClassName = "relative z-10 px-10 py-10 max-md:px-6 max-md:py-8";
+export const authCardInnerClassName = "relative z-10 px-[clamp(20px,4vw,40px)] py-[clamp(20px,4vh,40px)]";
 
 export const authCardTitleClassName =
   "mb-2 text-center text-[1.65rem] font-extrabold tracking-[-0.02em] text-[var(--text-heading)]";

@@ -45,7 +45,7 @@ const itemVariants = {
 
 export default function AuthLeftPanel() {
   return (
-    <div className="relative z-[1] hidden h-screen min-h-0 w-full flex-1 flex-col overflow-hidden bg-transparent lg:flex lg:max-w-[800px]">
+    <div className="relative z-[1] hidden min-h-dvh w-full flex-1 flex-col bg-transparent lg:flex lg:max-w-[min(800px,45vw)]">
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
