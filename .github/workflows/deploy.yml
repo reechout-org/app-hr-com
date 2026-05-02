@@ -40,6 +40,7 @@ jobs:
             NEXT_PUBLIC_FIREBASE_APP_ID:hr-app-475516/NEXT_PUBLIC_FIREBASE_APP_ID
             NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID:hr-app-475516/NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
             NEXT_PUBLIC_FIREBASE_VAPID_KEY:hr-app-475516/NEXT_PUBLIC_FIREBASE_VAPID_KEY
+            NEXT_PUBLIC_RECAPTCHA_SITE_KEY:hr-app-475516/NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 
       - name: Configure Docker for Artifact Registry
         run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
@@ -56,6 +57,7 @@ jobs:
             --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_APP_ID }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}" \
             --build-arg NEXT_PUBLIC_FIREBASE_VAPID_KEY="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}" \
+            --build-arg NEXT_PUBLIC_RECAPTCHA_SITE_KEY="${{ steps.secrets.outputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}" \
             -t ${{ env.IMAGE }}:${{ github.sha }} \
             -t ${{ env.IMAGE }}:latest \
             .

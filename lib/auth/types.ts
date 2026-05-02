@@ -41,6 +41,7 @@ export type SignupPayload = {
   last_name: string;
   email: string;
   password: string;
+  recaptcha_token: string;
 };
 
 /** `POST ${apiUrl}/auth/forgot-password` body. */

@@ -24,6 +24,7 @@ function normalizeSignupPayload(
   last_name?: string,
   email?: string,
   password?: string,
+  recaptcha_token?: string,
 ): SignupPayload {
   if (typeof firstOrPayload === "string") {
     return {
@@ -31,6 +32,7 @@ function normalizeSignupPayload(
       last_name: last_name ?? "",
       email: email ?? "",
       password: password ?? "",
+      recaptcha_token: recaptcha_token ?? "",
     };
   }
   return firstOrPayload;
@@ -55,8 +57,15 @@ export const authApi = {
     last_name?: string,
     email?: string,
     password?: string,
+    recaptcha_token?: string,
   ): Promise<ApiEnvelope<AuthEnvelopeData>> => {
-    const body = normalizeSignupPayload(firstOrPayload, last_name, email, password);
+    const body = normalizeSignupPayload(
+      firstOrPayload,
+      last_name,
+      email,
+      password,
+      recaptcha_token,
+    );
     const { data } = await apiClient.post<ApiEnvelope<AuthEnvelopeData>>(AUTH_API_PATHS.signup, body);
     return data;
   },

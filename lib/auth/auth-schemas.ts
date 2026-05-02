@@ -20,6 +20,7 @@ export const registerSchema = z
     terms: z.boolean().refine((v) => v === true, {
       message: "Accept the terms to continue",
     }),
+    recaptcha_token: z.string().min(1, "Please verify you're not a robot"),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "Passwords do not match",

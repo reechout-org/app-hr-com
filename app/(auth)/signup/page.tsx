@@ -5,7 +5,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Lock, Mail, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import {
   authCardClassName,
@@ -49,12 +50,15 @@ function FieldError({ message }: { message?: string }) {
 
 type SignupFieldKey = "email" | "password" | "first_name" | "last_name";
 
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+
 export default function RegisterPage() {
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
   const [serverFieldErrors, setServerFieldErrors] = useState<
     Partial<Record<SignupFieldKey, string>>
   >({});
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
   const setSession = useAuthStore((s) => s.setSession);
 
@@ -62,12 +66,13 @@ export default function RegisterPage() {
 
   const { mutate, isPending } = useMutation({
     mutationFn: (values: RegisterFormValues) =>
-      authApi.signup(
-        values.first_name,
-        values.last_name,
-        values.email,
-        values.password,
-      ),
+      authApi.signup({
+        first_name: values.first_name,
+        last_name: values.last_name,
+        email: values.email,
+        password: values.password,
+        recaptcha_token: values.recaptcha_token,
+      }),
     onSuccess: (response) => {
       const user = response.data?.user;
       if (user) {
@@ -78,6 +83,9 @@ export default function RegisterPage() {
       }
     },
     onError: (error) => {
+      // reCAPTCHA tokens are single-use; force a fresh challenge on any failure.
+      recaptchaRef.current?.reset();
+      form.setFieldValue("recaptcha_token", "");
       const fieldErrors = parseFieldErrors(error);
       const next: Partial<Record<SignupFieldKey, string>> = {};
       for (const [key, msg] of Object.entries(fieldErrors)) {
@@ -101,6 +109,7 @@ export default function RegisterPage() {
       password: "",
       confirm_password: "",
       terms: false,
+      recaptcha_token: "",
     } as RegisterFormValues,
     validators: { onSubmit: registerSchema },
     onSubmit: ({ value }) => {
@@ -301,6 +310,23 @@ export default function RegisterPage() {
                           </label>
                           <FieldError message={field.state.meta.errors[0]?.message} />
                         </div>
+                      </div>
+                    )}
+                  </form.Field>
+
+                  <form.Field name="recaptcha_token">
+                    {(field) => (
+                      <div className="flex flex-col items-center gap-1.5">
+                        {RECAPTCHA_SITE_KEY ? (
+                          <ReCAPTCHA
+                            ref={recaptchaRef}
+                            sitekey={RECAPTCHA_SITE_KEY}
+                            onChange={(token) => field.handleChange(token ?? "")}
+                            onExpired={() => field.handleChange("")}
+                            onErrored={() => field.handleChange("")}
+                          />
+                        ) : null}
+                        <FieldError message={field.state.meta.errors[0]?.message} />
                       </div>
                     )}
                   </form.Field>
