@@ -1,33 +1,27 @@
 name: Deploy to Cloud Run
 
 on:
+  pull_request:
   push:
     branches: [main]
 
 env:
+  GCP_REGION: ${{ secrets.GCP_REGION }}
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  REGION: ${{ secrets.GCP_REGION }}
-  SERVICE: app-hr-com
-  IMAGE: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app-hr-com
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
+      - uses: google-github-actions/auth@v2
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+      - uses: google-github-actions/setup-gcloud@v2
 
-      - name: Fetch build secrets from Secret Manager
-        id: secrets
+      - id: secrets
         uses: google-github-actions/get-secretmanager-secrets@v2
         with:
           secrets: |-
@@ -42,35 +36,44 @@ jobs:
             NEXT_PUBLIC_FIREBASE_VAPID_KEY:hr-app-475516/NEXT_PUBLIC_FIREBASE_VAPID_KEY
             NEXT_PUBLIC_RECAPTCHA_SITE_KEY:hr-app-475516/NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+      - env:
+          NEXT_PUBLIC_API_URL: ${{ steps.secrets.outputs.NEXT_PUBLIC_API_URL }}
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_APP_ID }}
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
+          NEXT_PUBLIC_FIREBASE_VAPID_KEY: ${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ steps.secrets.outputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
+        run: make build-image
 
-      - name: Build Docker Image
-        run: |
-          docker build \
-            --build-arg NEXT_PUBLIC_API_URL="${{ steps.secrets.outputs.NEXT_PUBLIC_API_URL }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_API_KEY="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_API_KEY }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_PROJECT_ID }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_APP_ID="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_APP_ID }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}" \
-            --build-arg NEXT_PUBLIC_FIREBASE_VAPID_KEY="${{ steps.secrets.outputs.NEXT_PUBLIC_FIREBASE_VAPID_KEY }}" \
-            --build-arg NEXT_PUBLIC_RECAPTCHA_SITE_KEY="${{ steps.secrets.outputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}" \
-            -t ${{ env.IMAGE }}:${{ github.sha }} \
-            -t ${{ env.IMAGE }}:latest \
-            .
+      - run: make build-image-push
+      - run: make build-image-push-build-stage
 
-      - name: Push Docker Image
-        run: |
-          docker push ${{ env.IMAGE }}:${{ github.sha }}
-          docker push ${{ env.IMAGE }}:latest
+  deploy:
+    concurrency:
+      group: deploy-lock
+      cancel-in-progress: false
+    if: github.ref == 'refs/heads/main'
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
+      - uses: google-github-actions/auth@v2
         with:
-          service: ${{ env.SERVICE }}
-          region: ${{ env.REGION }}
-          image: ${{ env.IMAGE }}:${{ github.sha }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - run: make build-image-pull
+      - run: make build-image-promote
+
+      - uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: app-hr-com
+          region: ${{ secrets.GCP_REGION }}
+          image: ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/cloud-run-source-deploy/app-hr-com:${{ github.sha }}
           flags: "--allow-unauthenticated"
